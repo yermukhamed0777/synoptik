@@ -1,0 +1,18 @@
+export const view = {
+  route: '/ask',
+  thread: [],
+  drawer: null,
+  quick: null,
+  confirm: null,
+  tour: null,
+  tourBusy: false,
+  tourStarted: 0,
+  onboard: null,
+  navOpen: false,
+  libQuery: '',
+  libType: 'all',
+  libStatus: 'all',
+  spotsTab: 'open',
+  lastFocus: null,
+  seq: 0,
+};

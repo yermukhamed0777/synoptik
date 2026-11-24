@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.docx binary
+*.xlsx binary
+*.pdf binary
+*.mjs text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.md text eol=lf

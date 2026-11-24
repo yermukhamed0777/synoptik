@@ -1,0 +1,15 @@
+{
+  "name": "synoptik",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Evidence-first answers from business documents. Every answer carries its source, or it is refused.",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node build.mjs && node scripts/serve.mjs",
+    "test": "node --test tests/"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
