@@ -13,10 +13,18 @@ test('tokenizer drops stopwords and keeps numbers', () => {
   assert.ok(!terms.includes('how'));
 });
 
-test('stemming canonicalises price synonyms across languages', () => {
+test('stemming canonicalises price concepts across languages', () => {
   assert.equal(stem('prices'), 'price');
-  assert.equal(stem('стоимость'), 'цена');
-  assert.equal(stem('тұрады'), 'баға');
+  assert.equal(stem('цены'), 'price');
+  assert.equal(stem('баға'), 'price');
+});
+
+test('units collapse so 10 L and 10 литров are the same quantity', () => {
+  const english = tokenize('10 litre pack').map(token => token.s);
+  const russian = tokenize('10 литров').map(token => token.s);
+  assert.ok(english.includes('l'));
+  assert.ok(russian.includes('l'));
+  assert.ok(english.includes('10') && russian.includes('10'));
 });
 
 test('a price question is answered from the price list with strong evidence', () => {
@@ -33,6 +41,44 @@ test('a Kazakh question finds the same passage', () => {
   assert.equal(result.status, 'answer');
   const line = result.hits[0].chunk.lines[result.hits[0].evidenceLines[0]];
   assert.match(line.join(' '), /42[\s,]?800/);
+});
+
+test('a transliterated brand name still retrieves the price line', () => {
+  const result = search(index, 'Цена ТерраШилд X5', { threshold: 0.6 });
+  assert.equal(result.status, 'answer');
+  assert.equal(result.hits[0].chunk.id, 'price1');
+});
+
+test('a typo in a product name is tolerated when the question has context', () => {
+  const result = search(index, 'TerraShiled X5 price', { threshold: 0.6 });
+  assert.equal(result.status, 'answer');
+  assert.equal(result.hits[0].chunk.id, 'price1');
+});
+
+test('a unit variant retrieves the same pack price', () => {
+  const result = search(index, 'What does a 10 litre can of TerraShield X5 cost?', { threshold: 0.6 });
+  assert.equal(result.status, 'answer');
+  assert.equal(result.hits[0].chunk.id, 'price1');
+});
+
+test('the engine surfaces a price conflict and prefers the price list', () => {
+  const named = CHUNKS.map(chunk => ({
+    ...chunk,
+    docName: { cat: 'Product_Catalog_2025.pdf', price: 'Price_List_2026.xlsx' }[chunk.doc] || chunk.doc,
+  }));
+  const namedIndex = buildIndex(named);
+  const result = search(namedIndex, 'How much does TerraShield X5 cost?', { threshold: 0.6 });
+  assert.equal(result.status, 'answer');
+  assert.ok(result.conflict, 'expected a conflict');
+  assert.equal(result.conflict.used.value, 42800);
+  assert.equal(result.conflict.other.value, 40900);
+  assert.match(result.conflict.used.docName, /Price_List/);
+});
+
+test('comparison questions are refused rather than answered with one side', () => {
+  const result = search(index, 'What is the difference between TerraShield X5 and SilkWall Interior Matt?', { threshold: 0.6 });
+  assert.equal(result.status, 'abstain');
+  assert.equal(result.reason, 'comparison');
 });
 
 test('an unknown topic is refused instead of guessed', () => {

@@ -1,0 +1,40 @@
+{
+  "name": "demo-paraphrase",
+  "description": "Held-out questions written after the corpus. Units, typos, transliteration, identifier traps and unanswerable questions.",
+  "corpus": "demo",
+  "threshold": 0.6,
+  "maxSources": 3,
+  "questions": [
+    { "id": "en-price-litre", "lang": 0, "q": "What does a 10 litre can of TerraShield X5 cost?", "tags": ["price", "unit", "en"], "expect": { "chunks": ["price1"], "contains": ["42,800"] } },
+    { "id": "en-price-typo", "lang": 0, "q": "TerraShiled X5 price", "tags": ["price", "typo", "en"], "expect": { "chunks": ["price1"], "contains": ["42,800"] } },
+    { "id": "en-metal-rust", "lang": 0, "q": "Which product should I use on rusty steel?", "tags": ["compat", "en"], "expect": { "chunks": ["cat3", "comp3"], "contains": ["MetalGuard"] } },
+    { "id": "en-primer", "lang": 0, "q": "Which primer goes under the facade paint?", "tags": ["compat", "en"], "expect": { "chunks": ["cat5", "comp1"], "contains": ["AquaPrime"] } },
+    { "id": "en-alkyd", "lang": 0, "q": "Can TerraShield X5 go over old alkyd paint?", "tags": ["compat", "en"], "expect": { "chunks": ["comp1"], "contains": ["not compatible"] } },
+    { "id": "en-astana", "lang": 0, "q": "How long does shipping to Astana take?", "tags": ["delivery", "en"], "expect": { "chunks": ["deliv2"], "contains": ["2–3"] } },
+    { "id": "en-return-window", "lang": 0, "q": "What is the return window for unopened cans?", "tags": ["returns", "en"], "expect": { "chunks": ["warr3"], "contains": ["14 days"] } },
+    { "id": "en-warranty-storage", "lang": 0, "q": "Does the warranty cover damage from improper storage?", "tags": ["warranty", "en"], "expect": { "chunks": ["warr2"], "contains": ["not covered"] } },
+    { "id": "en-installment", "lang": 0, "q": "Do you offer installment payment?", "tags": ["unanswerable", "en"], "answerable": false },
+    { "id": "en-voc", "lang": 0, "q": "What is the VOC level of SilkWall?", "tags": ["unanswerable", "en"], "answerable": false },
+    { "id": "en-20l", "lang": 0, "q": "What is the price of a 20 L TerraShield pack?", "tags": ["unanswerable", "identifier", "en"], "answerable": false },
+
+    { "id": "ru-price-litre", "lang": 1, "q": "Сколько стоит банка TerraShield X5 на 10 литров?", "tags": ["price", "unit", "ru"], "expect": { "chunks": ["price1"], "contains": ["42 800"] } },
+    { "id": "ru-translit", "lang": 1, "q": "Цена ТерраШилд X5", "tags": ["price", "translit", "ru"], "expect": { "chunks": ["price1"], "contains": ["42 800"] } },
+    { "id": "ru-facade", "lang": 1, "q": "Какая краска подойдёт для бетонного фасада?", "tags": ["compat", "ru"], "expect": { "chunks": ["cat1", "comp1"], "contains": ["TerraShield"] } },
+    { "id": "ru-astana", "lang": 1, "q": "Сколько идёт доставка в Астану?", "tags": ["delivery", "ru"], "expect": { "chunks": ["deliv2"], "contains": ["2–3"] } },
+    { "id": "ru-return", "lang": 1, "q": "Можно ли вернуть нераспечатанную банку?", "tags": ["returns", "ru"], "expect": { "chunks": ["warr3"], "contains": ["14"] } },
+    { "id": "ru-aquaprime", "lang": 1, "q": "Каков расход грунта AquaPrime?", "tags": ["specs", "ru"], "expect": { "chunks": ["spec5"], "contains": ["10–12"] } },
+    { "id": "ru-installment", "lang": 1, "q": "Даёте ли рассрочку?", "tags": ["unanswerable", "ru"], "answerable": false },
+    { "id": "ru-saturday", "lang": 1, "q": "Работаете ли вы в субботу?", "tags": ["service", "ru"], "expect": { "chunks": ["faq1"], "contains": ["10:00–15:00"] } },
+    { "id": "ru-metal-temp", "lang": 1, "q": "Какая температура нанесения MetalGuard?", "tags": ["specs", "ru"], "expect": { "chunks": ["spec3"], "contains": ["−10"] } },
+    { "id": "ru-customs", "lang": 1, "q": "Кто оплачивает таможенные пошлины?", "tags": ["unanswerable", "ru"], "answerable": false },
+
+    { "id": "kk-price", "lang": 2, "q": "TerraShield X5 10 литр қаптамасы қанша тұрады?", "tags": ["price", "kk"], "expect": { "chunks": ["price1"], "contains": ["42 800"] } },
+    { "id": "kk-facade", "lang": 2, "q": "Бетон қасбетке қандай бояу жарамды?", "tags": ["compat", "kk"], "expect": { "chunks": ["cat1", "comp1"], "contains": ["TerraShield"] } },
+    { "id": "kk-astana", "lang": 2, "q": "Астанаға жеткізу қанша уақыт алады?", "tags": ["delivery", "kk"], "expect": { "chunks": ["deliv2"], "contains": ["2–3"] } },
+    { "id": "kk-warranty", "lang": 2, "q": "TerraShield X5 кепілдік мерзімі қанша?", "tags": ["warranty", "kk"], "expect": { "chunks": ["warr1"], "contains": ["10"] } },
+    { "id": "kk-installment", "lang": 2, "q": "Бөліп төлеу бар ма?", "tags": ["unanswerable", "kk"], "answerable": false },
+    { "id": "kk-customs", "lang": 2, "q": "Кедендік алымдарды кім төлейді?", "tags": ["unanswerable", "kk"], "answerable": false },
+    { "id": "kk-20l", "lang": 2, "q": "TerraShield X5 20 л бағасы қанша?", "tags": ["unanswerable", "identifier", "kk"], "answerable": false },
+    { "id": "kk-silk-price", "lang": 2, "q": "SilkWall 9 литр бағасы қанша?", "tags": ["price", "kk"], "expect": { "chunks": ["price1"], "contains": ["27 900"] } }
+  ]
+}

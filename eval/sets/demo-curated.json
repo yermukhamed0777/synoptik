@@ -1,0 +1,1230 @@
+{
+  "name": "demo-curated",
+  "description": "All 27 curated questions in all three languages, graded on retrieval only (curated answers are ignored).",
+  "corpus": "demo",
+  "threshold": 0.6,
+  "maxSources": 3,
+  "questions": [
+    {
+      "id": "q-price-x5-en",
+      "lang": 0,
+      "q": "How much does TerraShield X5 cost?",
+      "tags": [
+        "pricing",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price1",
+          "cat1",
+          "faq4",
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-x5-ru",
+      "lang": 1,
+      "q": "Сколько стоит TerraShield X5?",
+      "tags": [
+        "pricing",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price1",
+          "cat1",
+          "faq4",
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-x5-kk",
+      "lang": 2,
+      "q": "TerraShield X5 қанша тұрады?",
+      "tags": [
+        "pricing",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price1",
+          "cat1",
+          "faq4",
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-silk-en",
+      "lang": 0,
+      "q": "What is the price of SilkWall Interior Matt?",
+      "tags": [
+        "pricing",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price1",
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-silk-ru",
+      "lang": 1,
+      "q": "Какая цена у SilkWall Interior Matt?",
+      "tags": [
+        "pricing",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price1",
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-silk-kk",
+      "lang": 2,
+      "q": "SilkWall Interior Matt бағасы қандай?",
+      "tags": [
+        "pricing",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price1",
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-mg-en",
+      "lang": 0,
+      "q": "How much is MetalGuard 3-in-1?",
+      "tags": [
+        "pricing",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-mg-ru",
+      "lang": 1,
+      "q": "Сколько стоит MetalGuard 3-in-1?",
+      "tags": [
+        "pricing",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-price-mg-kk",
+      "lang": 2,
+      "q": "MetalGuard 3-in-1 қанша тұрады?",
+      "tags": [
+        "pricing",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price2"
+        ]
+      }
+    },
+    {
+      "id": "q-warr-x5-en",
+      "lang": 0,
+      "q": "What is the warranty period for TerraShield X5?",
+      "tags": [
+        "warranty",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr1",
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-warr-x5-ru",
+      "lang": 1,
+      "q": "Какой гарантийный срок на TerraShield X5?",
+      "tags": [
+        "warranty",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr1",
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-warr-x5-kk",
+      "lang": 2,
+      "q": "TerraShield X5 кепілдік мерзімі қандай?",
+      "tags": [
+        "warranty",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr1",
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-warr-all-en",
+      "lang": 0,
+      "q": "What is the warranty period?",
+      "tags": [
+        "warranty",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr1"
+        ]
+      }
+    },
+    {
+      "id": "q-warr-all-ru",
+      "lang": 1,
+      "q": "Какой гарантийный срок?",
+      "tags": [
+        "warranty",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr1"
+        ]
+      }
+    },
+    {
+      "id": "q-warr-all-kk",
+      "lang": 2,
+      "q": "Кепілдік мерзімі қандай?",
+      "tags": [
+        "warranty",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr1"
+        ]
+      }
+    },
+    {
+      "id": "q-claim-en",
+      "lang": 0,
+      "q": "What do I need to file a warranty claim?",
+      "tags": [
+        "warranty",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-claim-ru",
+      "lang": 1,
+      "q": "Что нужно для подачи гарантийной рекламации?",
+      "tags": [
+        "warranty",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-claim-kk",
+      "lang": 2,
+      "q": "Кепілдік шағымын беру үшін не қажет?",
+      "tags": [
+        "warranty",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-facade-en",
+      "lang": 0,
+      "q": "Which paint is suitable for a concrete facade?",
+      "tags": [
+        "compat",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat1",
+          "comp1",
+          "cat5"
+        ]
+      }
+    },
+    {
+      "id": "q-facade-ru",
+      "lang": 1,
+      "q": "Какая краска подходит для бетонного фасада?",
+      "tags": [
+        "compat",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat1",
+          "comp1",
+          "cat5"
+        ]
+      }
+    },
+    {
+      "id": "q-facade-kk",
+      "lang": 2,
+      "q": "Бетон қасбетке қандай бояу жарамды?",
+      "tags": [
+        "compat",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat1",
+          "comp1",
+          "cat5"
+        ]
+      }
+    },
+    {
+      "id": "q-rust-en",
+      "lang": 0,
+      "q": "Which product should I use on rusty metal?",
+      "tags": [
+        "compat",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat3",
+          "spec3",
+          "comp3"
+        ]
+      }
+    },
+    {
+      "id": "q-rust-ru",
+      "lang": 1,
+      "q": "Что использовать для ржавого металла?",
+      "tags": [
+        "compat",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat3",
+          "spec3",
+          "comp3"
+        ]
+      }
+    },
+    {
+      "id": "q-rust-kk",
+      "lang": 2,
+      "q": "Тот басқан металға қандай өнім қолдану керек?",
+      "tags": [
+        "compat",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat3",
+          "spec3",
+          "comp3"
+        ]
+      }
+    },
+    {
+      "id": "q-compat-x5-aqua-en",
+      "lang": 0,
+      "q": "Is TerraShield X5 compatible with AquaPrime 100?",
+      "tags": [
+        "compat",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp1",
+          "cat5",
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-compat-x5-aqua-ru",
+      "lang": 1,
+      "q": "TerraShield X5 совместим с AquaPrime 100?",
+      "tags": [
+        "compat",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp1",
+          "cat5",
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-compat-x5-aqua-kk",
+      "lang": 2,
+      "q": "TerraShield X5 AquaPrime 100-мен үйлесімді ме?",
+      "tags": [
+        "compat",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp1",
+          "cat5",
+          "warr2"
+        ]
+      }
+    },
+    {
+      "id": "q-compat-mg-aqua-en",
+      "lang": 0,
+      "q": "Is MetalGuard 3-in-1 compatible with AquaPrime 100?",
+      "tags": [
+        "compat",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp3",
+          "cat3"
+        ]
+      }
+    },
+    {
+      "id": "q-compat-mg-aqua-ru",
+      "lang": 1,
+      "q": "MetalGuard 3-in-1 совместим с AquaPrime 100?",
+      "tags": [
+        "compat",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp3",
+          "cat3"
+        ]
+      }
+    },
+    {
+      "id": "q-compat-mg-aqua-kk",
+      "lang": 2,
+      "q": "MetalGuard 3-in-1 AquaPrime 100-мен үйлесімді ме?",
+      "tags": [
+        "compat",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp3",
+          "cat3"
+        ]
+      }
+    },
+    {
+      "id": "q-bath-en",
+      "lang": 0,
+      "q": "Can SilkWall be used in a bathroom?",
+      "tags": [
+        "compat",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp2",
+          "cat2",
+          "cat5"
+        ]
+      }
+    },
+    {
+      "id": "q-bath-ru",
+      "lang": 1,
+      "q": "Можно ли использовать SilkWall в ванной?",
+      "tags": [
+        "compat",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp2",
+          "cat2",
+          "cat5"
+        ]
+      }
+    },
+    {
+      "id": "q-bath-kk",
+      "lang": 2,
+      "q": "SilkWall-ды жуынатын бөлмеде қолдануға бола ма?",
+      "tags": [
+        "compat",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "comp2",
+          "cat2",
+          "cat5"
+        ]
+      }
+    },
+    {
+      "id": "q-deliv-alm-en",
+      "lang": 0,
+      "q": "What are the delivery conditions in Almaty?",
+      "tags": [
+        "delivery",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv1",
+          "deliv3"
+        ]
+      }
+    },
+    {
+      "id": "q-deliv-alm-ru",
+      "lang": 1,
+      "q": "Каковы условия доставки по Алматы?",
+      "tags": [
+        "delivery",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv1",
+          "deliv3"
+        ]
+      }
+    },
+    {
+      "id": "q-deliv-alm-kk",
+      "lang": 2,
+      "q": "Алматы бойынша жеткізу шарттары қандай?",
+      "tags": [
+        "delivery",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv1",
+          "deliv3"
+        ]
+      }
+    },
+    {
+      "id": "q-deliv-astana-en",
+      "lang": 0,
+      "q": "How long does delivery to Astana take?",
+      "tags": [
+        "delivery",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv2"
+        ]
+      }
+    },
+    {
+      "id": "q-deliv-astana-ru",
+      "lang": 1,
+      "q": "Сколько занимает доставка в Астану?",
+      "tags": [
+        "delivery",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv2"
+        ]
+      }
+    },
+    {
+      "id": "q-deliv-astana-kk",
+      "lang": 2,
+      "q": "Астанаға жеткізу қанша уақыт алады?",
+      "tags": [
+        "delivery",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv2"
+        ]
+      }
+    },
+    {
+      "id": "q-sameday-en",
+      "lang": 0,
+      "q": "Do you ship orders the same day?",
+      "tags": [
+        "delivery",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv1"
+        ]
+      }
+    },
+    {
+      "id": "q-sameday-ru",
+      "lang": 1,
+      "q": "Отправляете ли вы заказы в день обращения?",
+      "tags": [
+        "delivery",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv1"
+        ]
+      }
+    },
+    {
+      "id": "q-sameday-kk",
+      "lang": 2,
+      "q": "Тапсырыстарды сол күні жібересіздер ме?",
+      "tags": [
+        "delivery",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "deliv1"
+        ]
+      }
+    },
+    {
+      "id": "q-cov-x5-en",
+      "lang": 0,
+      "q": "What is the coverage of TerraShield X5?",
+      "tags": [
+        "specs",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec1"
+        ]
+      }
+    },
+    {
+      "id": "q-cov-x5-ru",
+      "lang": 1,
+      "q": "Каков расход TerraShield X5?",
+      "tags": [
+        "specs",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec1"
+        ]
+      }
+    },
+    {
+      "id": "q-cov-x5-kk",
+      "lang": 2,
+      "q": "TerraShield X5 жабу ауданы қандай?",
+      "tags": [
+        "specs",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec1"
+        ]
+      }
+    },
+    {
+      "id": "q-cov-silk-en",
+      "lang": 0,
+      "q": "What is the coverage of SilkWall Interior Matt?",
+      "tags": [
+        "specs",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec2"
+        ]
+      }
+    },
+    {
+      "id": "q-cov-silk-ru",
+      "lang": 1,
+      "q": "Каков расход SilkWall Interior Matt?",
+      "tags": [
+        "specs",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec2"
+        ]
+      }
+    },
+    {
+      "id": "q-cov-silk-kk",
+      "lang": 2,
+      "q": "SilkWall Interior Matt жабу ауданы қандай?",
+      "tags": [
+        "specs",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec2"
+        ]
+      }
+    },
+    {
+      "id": "q-apply-x5-en",
+      "lang": 0,
+      "q": "What is the recommended application method for TerraShield X5?",
+      "tags": [
+        "specs",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec1"
+        ]
+      }
+    },
+    {
+      "id": "q-apply-x5-ru",
+      "lang": 1,
+      "q": "Каков рекомендуемый способ нанесения TerraShield X5?",
+      "tags": [
+        "specs",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec1"
+        ]
+      }
+    },
+    {
+      "id": "q-apply-x5-kk",
+      "lang": 2,
+      "q": "TerraShield X5 жағудың ұсынылатын тәсілі қандай?",
+      "tags": [
+        "specs",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "spec1"
+        ]
+      }
+    },
+    {
+      "id": "q-diff-en",
+      "lang": 0,
+      "q": "What is the difference between TerraShield X5 and SilkWall Interior Matt?",
+      "tags": [
+        "compat",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat1",
+          "cat2",
+          "price1",
+          "spec1",
+          "spec2",
+          "warr1"
+        ]
+      }
+    },
+    {
+      "id": "q-diff-ru",
+      "lang": 1,
+      "q": "В чём разница между TerraShield X5 и SilkWall Interior Matt?",
+      "tags": [
+        "compat",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat1",
+          "cat2",
+          "price1",
+          "spec1",
+          "spec2",
+          "warr1"
+        ]
+      }
+    },
+    {
+      "id": "q-diff-kk",
+      "lang": 2,
+      "q": "TerraShield X5 мен SilkWall Interior Matt арасындағы айырмашылық қандай?",
+      "tags": [
+        "compat",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "cat1",
+          "cat2",
+          "price1",
+          "spec1",
+          "spec2",
+          "warr1"
+        ]
+      }
+    },
+    {
+      "id": "q-disc-en",
+      "lang": 0,
+      "q": "Does the company offer discounts?",
+      "tags": [
+        "discounts",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price3",
+          "faq3"
+        ]
+      }
+    },
+    {
+      "id": "q-disc-ru",
+      "lang": 1,
+      "q": "Есть ли у компании скидки?",
+      "tags": [
+        "discounts",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price3",
+          "faq3"
+        ]
+      }
+    },
+    {
+      "id": "q-disc-kk",
+      "lang": 2,
+      "q": "Компанияда жеңілдіктер бар ма?",
+      "tags": [
+        "discounts",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "price3",
+          "faq3"
+        ]
+      }
+    },
+    {
+      "id": "q-return-en",
+      "lang": 0,
+      "q": "What is the return policy?",
+      "tags": [
+        "returns",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr3"
+        ]
+      }
+    },
+    {
+      "id": "q-return-ru",
+      "lang": 1,
+      "q": "Какова политика возврата?",
+      "tags": [
+        "returns",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr3"
+        ]
+      }
+    },
+    {
+      "id": "q-return-kk",
+      "lang": 2,
+      "q": "Қайтару саясаты қандай?",
+      "tags": [
+        "returns",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "warr3"
+        ]
+      }
+    },
+    {
+      "id": "q-tint-en",
+      "lang": 0,
+      "q": "Can paint be tinted and how much does it cost?",
+      "tags": [
+        "pricing",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "faq2",
+          "price4"
+        ]
+      }
+    },
+    {
+      "id": "q-tint-ru",
+      "lang": 1,
+      "q": "Можно ли колеровать краску и сколько это стоит?",
+      "tags": [
+        "pricing",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "faq2",
+          "price4"
+        ]
+      }
+    },
+    {
+      "id": "q-tint-kk",
+      "lang": 2,
+      "q": "Бояуды түстеуге бола ма және ол қанша тұрады?",
+      "tags": [
+        "pricing",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "faq2",
+          "price4"
+        ]
+      }
+    },
+    {
+      "id": "q-hours-en",
+      "lang": 0,
+      "q": "What are the customer service hours?",
+      "tags": [
+        "general",
+        "en",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "faq1"
+        ]
+      }
+    },
+    {
+      "id": "q-hours-ru",
+      "lang": 1,
+      "q": "Каков график работы клиентской службы?",
+      "tags": [
+        "general",
+        "ru",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "faq1"
+        ]
+      }
+    },
+    {
+      "id": "q-hours-kk",
+      "lang": 2,
+      "q": "Тапсырыс берушілерге қызмет көрсету уақыты қандай?",
+      "tags": [
+        "general",
+        "kk",
+        "curated"
+      ],
+      "expect": {
+        "chunks": [
+          "faq1"
+        ]
+      }
+    },
+    {
+      "id": "x-intl-en",
+      "lang": 0,
+      "q": "Do you deliver to Russia or other countries?",
+      "tags": [
+        "delivery",
+        "en",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-intl-ru",
+      "lang": 1,
+      "q": "Доставляете ли вы в Россию или другие страны?",
+      "tags": [
+        "delivery",
+        "ru",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-intl-kk",
+      "lang": 2,
+      "q": "Ресейге немесе басқа елдерге жеткізесіздер ме?",
+      "tags": [
+        "delivery",
+        "kk",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-20l-en",
+      "lang": 0,
+      "q": "How much is a 20 L pack of TerraShield X5?",
+      "tags": [
+        "pricing",
+        "en",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-20l-ru",
+      "lang": 1,
+      "q": "Сколько стоит упаковка TerraShield X5 20 л?",
+      "tags": [
+        "pricing",
+        "ru",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-20l-kk",
+      "lang": 2,
+      "q": "TerraShield X5 20 л қаптамасы қанша тұрады?",
+      "tags": [
+        "pricing",
+        "kk",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-voc-en",
+      "lang": 0,
+      "q": "What is the VOC content of SilkWall?",
+      "tags": [
+        "safety",
+        "en",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-voc-ru",
+      "lang": 1,
+      "q": "Каково содержание ЛОС в SilkWall?",
+      "tags": [
+        "safety",
+        "ru",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-voc-kk",
+      "lang": 2,
+      "q": "SilkWall құрамындағы ұшпа органикалық қосылыстар мөлшері қандай?",
+      "tags": [
+        "safety",
+        "kk",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-install-en",
+      "lang": 0,
+      "q": "Do you offer installment payment?",
+      "tags": [
+        "payment",
+        "en",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-install-ru",
+      "lang": 1,
+      "q": "Есть ли рассрочка?",
+      "tags": [
+        "payment",
+        "ru",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-install-kk",
+      "lang": 2,
+      "q": "Бөліп төлеу (рассрочка) бар ма?",
+      "tags": [
+        "payment",
+        "kk",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-pool-en",
+      "lang": 0,
+      "q": "Is TerraShield X5 suitable for swimming pools?",
+      "tags": [
+        "specs",
+        "en",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-pool-ru",
+      "lang": 1,
+      "q": "Подходит ли TerraShield X5 для бассейнов?",
+      "tags": [
+        "specs",
+        "ru",
+        "unanswerable"
+      ],
+      "answerable": false
+    },
+    {
+      "id": "x-pool-kk",
+      "lang": 2,
+      "q": "TerraShield X5 бассейндерге жарай ма?",
+      "tags": [
+        "specs",
+        "kk",
+        "unanswerable"
+      ],
+      "answerable": false
+    }
+  ]
+}

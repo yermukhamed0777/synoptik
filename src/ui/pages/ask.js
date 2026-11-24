@@ -105,17 +105,44 @@ function evidenceCard(turn, evidence, index) {
     </button>`;
 }
 
-function conflictBlock(result) {
+function conflictBlock(result, turn) {
   if (!result.conflict) return '';
-  const used = docById(result.conflict.a[0]);
-  const older = docById(result.conflict.b[0]);
-  const rule = docById(result.conflict.rule[0]);
+  const conflict = result.conflict;
+
+  if (conflict.used && conflict.other) {
+    const usedIndex = result.evidence.findIndex(evidence => evidence.chunk.id === conflict.used.chunk);
+    const otherIndex = result.evidence.findIndex(evidence => evidence.chunk.id === conflict.other.chunk);
+    const usedName = docById(conflict.used.doc)?.name || conflict.used.docName;
+    const otherName = docById(conflict.other.doc)?.name || conflict.other.docName;
+    const value = (index, entry, name) => {
+      const body = `<b>${fmtNum(entry.value)} ₸</b> — ${esc(name)}`;
+      return index >= 0
+        ? `<button type="button" class="link-button" data-act="source" data-turn="${turn.id}" data-i="${index}">${body}</button>`
+        : `<p>${body}</p>`;
+    };
+    return `
+      <div class="callout warn">
+        ${icon('layers', 'sm')}
+        <div>
+          <b>${esc(t('cmp.title'))}</b>
+          <div class="conflict-grid">
+            <div><span class="eyebrow">${esc(t('cmp.live.used'))}</span>${value(usedIndex, conflict.used, usedName)}</div>
+            <div><span class="eyebrow">${esc(t('cmp.live.other'))}</span>${value(otherIndex, conflict.other, otherName)}</div>
+          </div>
+          <p class="muted small">${esc(t('cmp.live.note'))}</p>
+        </div>
+      </div>`;
+  }
+
+  const used = docById(conflict.a?.[0]);
+  const older = docById(conflict.b?.[0]);
+  const rule = docById(conflict.rule?.[0]);
   if (!used || !older) return '';
   return `
     <div class="callout warn">
       ${icon('layers', 'sm')}
       <div>
-        <b>${esc(pick(result.conflict.note))}</b> — ${esc(t('cmp.rule'))}.
+        <b>${esc(pick(conflict.note))}</b> — ${esc(t('cmp.rule'))}.
         <div class="conflict-grid">
           <div><span class="eyebrow">${esc(t('cmp.used'))}</span><p>${esc(used.name)}</p></div>
           <div><span class="eyebrow">${esc(t('cmp.older'))}</span><p>${esc(older.name)}</p></div>
@@ -185,7 +212,7 @@ function verifiedAnswer(turn) {
         <p class="answer-direct">${esc(composed.direct)}<span class="cite-group">${cites}</span></p>
         <div class="source-row"><span class="eyebrow">${esc(t('ans.source'))}</span>${docChips}</div>
         ${composed.details.length ? `<ul class="answer-details">${composed.details.map(detail => `<li>${esc(detail)}</li>`).join('')}</ul>` : ''}
-        ${conflictBlock(result)}
+        ${conflictBlock(result, turn)}
         <div class="evidence-list">
           <div class="eyebrow">${esc(t('ans.evidence'))} · ${result.evidence.length}</div>
           ${result.evidence.map((evidence, index) => evidenceCard(turn, evidence, index)).join('')}
@@ -207,10 +234,15 @@ function verifiedAnswer(turn) {
 
 function refusedAnswer(turn) {
   const result = turn.result;
-  const related = (result.related || []).map(docById).filter(Boolean);
-  const why = result.qa ? pick(result.qa.why) : result.missing && result.missing.length
-    ? t('abst.terms', result.missing.slice(0, 4).join(', '))
-    : t('abst.generic');
+  const comparison = result.reason === 'comparison';
+  const related = comparison ? [] : (result.related || []).map(docById).filter(Boolean);
+  const why = result.qa
+    ? pick(result.qa.why)
+    : result.reason === 'comparison'
+      ? t('abst.comparison')
+      : result.missing && result.missing.length
+        ? t('abst.terms', result.missing.slice(0, 4).join(', '))
+        : t('abst.generic');
   return `
     <article class="answer refused">
       <header class="answer-head">
@@ -222,12 +254,12 @@ function refusedAnswer(turn) {
         <p class="answer-direct">${esc(t('abst.title'))}</p>
         <p class="dim">${esc(why)}</p>
         <ul class="refusal-list">
-          <li>${esc(t('abst.missing'))}</li>
+          ${comparison ? '' : `<li>${esc(t('abst.missing'))}</li>`}
           ${result.qa ? `<li>${esc(pick(result.qa.missing))}</li>` : ''}
           <li>${esc(t('abst.rule'))}</li>
         </ul>
         ${related.length ? `<div class="related"><span class="eyebrow">${esc(t('abst.related'))}</span><div class="chip-row">${related.map(doc => `<button type="button" class="chip" data-act="document" data-id="${esc(doc.id)}">${ficon(doc.type)}${esc(doc.name)}</button>`).join('')}</div></div>` : ''}
-        <div class="callout info">${icon('spots', 'sm')}<div>${esc(t('abst.logged'))} <a href="#/spots">${esc(t('nav.spots'))}</a></div></div>
+        ${comparison ? '' : `<div class="callout info">${icon('spots', 'sm')}<div>${esc(t('abst.logged'))} <a href="#/spots">${esc(t('nav.spots'))}</a></div></div>`}
         ${howBuilt(result)}
       </div>
       <footer class="answer-actions">

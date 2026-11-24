@@ -7,7 +7,9 @@
   "scripts": {
     "build": "node build.mjs",
     "start": "node build.mjs && node scripts/serve.mjs",
-    "test": "node --test tests/"
+    "test": "node --test tests/",
+    "eval": "node scripts/evaluate.mjs --all --md eval/scorecard.md",
+    "eval:verbose": "node scripts/evaluate.mjs --all --verbose"
   },
   "engines": {
     "node": ">=20"

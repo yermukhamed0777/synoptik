@@ -1,7 +1,7 @@
 # Synoptik — product plan
 
 Owner: founder / lead
-Status: v0.1 rebuilt and verified, pre-pilot
+Status: v0.1 + M1 measurement layer, pre-pilot
 Last updated: 25 November 2026
 
 ---
@@ -10,15 +10,17 @@ Last updated: 25 November 2026
 
 Synoptik is an evidence-first answer layer for business documents. It reads price lists, policies, specifications and contracts, answers in plain language, and attaches the exact passage, file and location to every answer. When the evidence is not there, it refuses and files the question as a blind spot. The product is trilingual (EN/RU/KK), runs locally in the browser today, and is designed to become a server-side workspace with an audit trail for teams that cannot send documents to a general-purpose chatbot.
 
-## 2. What exists now (v0.1)
+## 2. What exists now (v0.1 + M1)
 
 - A rebuilt codebase at `~/Documents/Projects/Synoptik`, new history, new name, no legacy references.
-- A working retrieval engine: BM25, RU/KK stemming, evidence coverage, abstention, identifier guard, price/date/address boosts.
+- A working retrieval engine: BM25, RU/KK morphology, Cyrillic transliteration, unit normalisation, typo tolerance, document-intent routing, evidence coverage, abstention, identifier guard, price/date/address boosts.
+- **Evidence quality instrument:** an evaluation harness (`scripts/evaluate.mjs`), curated and held-out paraphrase sets, a committed scorecard, and a CI regression floor. Current demo-corpus result: **95.4% answered-correct, 1.2% wrong, 100% correct refusals** (110 questions, three languages).
+- **Price-conflict handling:** when a price list and a catalog quote different amounts for the same product, the price list is used and both values are shown with sources. Comparison questions are refused in live retrieval until comparison composition exists.
 - Real client-side parsing for TXT/MD, CSV, DOCX, XLSX (sheets, merges, dates, headers), PDF (pdf.js layout + tables), optional OCR.
 - A workspace: Ask, Library, Blind spots, Coverage, Settings, evidence drawer, document drawer, quick search, guided demo, onboarding.
 - A marketing site with a new visual identity: paper/ink/burnt-sienna, editorial serif, "receipt" motif, no stock SaaS gradients.
 - Trilingual interface and demo corpus; 27 curated demo questions, including 5 deliberate refusals.
-- Tests: engine, corpus integrity, parser fixtures, translation parity, credential/legacy-name scan.
+- Tests: engine, retrieval floor, corpus integrity, parser fixtures, translation parity, credential scan (33 tests).
 - Zero dependencies, zero API keys, static `dist/` build.
 - Verified in headless Chrome: refusal → blind spot → add evidence → cited answer; PDF upload; mobile; dark theme; guided demo.
 
@@ -116,15 +118,18 @@ Marketing site changes for Phase A:
 Scope: new identity, new codebase, corpus rebrand, tests, docs, visual verification.
 Exit criteria: build passes; all test files pass; core loop verified in Chrome; no legacy names or credentials in `src/`; `PLAN.md` agreed.
 
-### M1 — Evidence quality in the wild (2–3 weeks)
+### M1 — Evidence quality in the wild (in progress)
 Goal: the product is trustworthy on real, messy documents.
 Deliverables:
-- Evaluation harness with per-question expected evidence and a scorecard (answered-correct / refused-correct / wrong-answer).
-- 3 real corpora (with permission), 20–40 questions each, RU/KK/EN.
-- Fix top 10 failure classes: scanned PDFs, multi-column tables, merged headers, synonyms, doc version conflicts, unit variants (л/мл, кг/т), currency formats.
-- Document-level freshness: detect conflicting values and prefer the newer authoritative document, with a visible rule.
-- Confidence calibration: strength labels must match measured accuracy.
-Exit criteria: ≥85% answered-correct on answerable questions, ≤2% wrong-answer rate, ≥90% correct refusals on unanswerable questions across the three corpora.
+- [x] Evaluation harness with per-question expected evidence and a scorecard (answered-correct / refused-correct / wrong-answer).
+- [x] Demo-corpus regression sets (81 curated across three languages + 29 paraphrase/trap questions) and a CI floor at 90% answered-correct, ≤5% wrong, ≥95% refusals.
+- [x] First failure-class fixes: morphology, units (`10 л` = `10 L`), transliteration (`ТерраШилд`), typos, intent routing, money-line selection, price conflicts, comparison refusal.
+- [ ] 3 real corpora (with permission), 20–40 questions each, RU/KK/EN.
+- [ ] Fix the top failure classes found on those corpora: scanned PDFs, multi-column tables, merged headers, doc version conflicts, currency formats.
+- [ ] Document-level freshness: prefer the newer authoritative document for the same field, with a visible rule. (Price list > catalog is done; version dates are not.)
+- [ ] Confidence calibration: strength labels must match measured accuracy per label.
+Exit criteria: ≥85% answered-correct on answerable questions, ≤2% wrong-answer rate, ≥90% correct refusals on unanswerable questions across the three real corpora.
+Current status: demo regression suite passes at 95.4% / 1.2% / 100%, but that is not a substitute for the exit criteria. Real corpora remain the gate.
 Effort: 1 engineer, 1 part-time domain reviewer.
 
 ### M2 — Server, accounts, audit (3–4 weeks)
@@ -238,8 +243,10 @@ Anti-metrics: number of documents uploaded, number of questions asked without a 
 
 - [ ] Confirm beachhead and pricing hypothesis (1 conversation).
 - [ ] Line up 3 design partners and secure permission for their document sets.
-- [ ] Build the eval harness and a first 60-question scorecard on one real corpus.
-- [ ] Fix the top 5 extraction failures found in that corpus.
+- [x] Build the eval harness and a demo-corpus scorecard.
+- [ ] Run the harness on the first real corpus and record the scorecard in `eval/`.
+- [ ] Fix the top 5 extraction/retrieval failures found on that corpus.
+- [ ] Add a comparison-composition path (two cited lines, not one) or keep the refusal and document it.
 - [ ] Record a 3-minute walkthrough of the current demo for outbound.
 - [ ] Decide on the legacy repo cleanup and the `synoptik` remote.
 - [ ] Write the one-page security summary for buyers.
@@ -255,3 +262,20 @@ Anti-metrics: number of documents uploaded, number of questions asked without a 
 | 2026-11-24 | Blind spots as a first-class surface, not analytics | The refusal workflow is the durable differentiator |
 | 2026-11-24 | Extractive answers only in v0.1 | A generated sentence without a receipt undermines the product promise |
 | 2026-11-25 | Default to demo corpus on first run | Immediate value; the refusal and citation loop is visible in one click |
+| 2026-11-25 | Grade the answer line, not the evidence set | A lower evidence hit with the right number must not mask a wrong top answer |
+| 2026-11-25 | Prefer price list over catalog when amounts conflict, and show both | The most common real ambiguity for distributors; the user needs the disagreement, not a silent choice |
+| 2026-11-25 | Refuse live comparison questions until composition exists | Quoting one side of a comparison is a wrong answer with a receipt |
+| 2026-11-25 | Freeze tuning at 95.4% on the authored demo suite | Further gains on 110 authored questions would be overfitting; real corpora are the next signal |
+
+## 15. Progress log
+
+### 2026-11-25 — M1 measurement layer
+
+- Built `scripts/evaluate.mjs`: per-question scoring, tag breakdown, calibration, JSON/Markdown scorecards, thresholds that fail CI, real-corpus directory support.
+- Added 110 demo-corpus questions across EN/RU/KK, including typos, transliteration, unit variants, identifier traps, unanswerable questions and price conflicts.
+- Rewrote tokenisation: cross-language concept mapping (price/delivery/warranty/return), Cyrillic inflection stripping, transliteration, unit/currency normalisation, English light stemming, typo/prefix aliases, stopword expansion.
+- Added document-intent routing, money-line selection for price questions, and a comparison refusal guard.
+- Added generic price-conflict detection with source links and price-list-over-catalog precedence.
+- Fixed the scorecard to grade the displayed answer line; this exposed 12 hidden wrong answers that the previous "any evidence hit" grading had masked.
+- Result: 95.4% answered-correct, 1.2% wrong, 100% refusals on the authored demo suite; 33 tests green.
+- Remaining known failures: three live comparison questions (refused by design) and one primer question that quotes the wrong compatibility line. Both are on the M1 real-corpus list.

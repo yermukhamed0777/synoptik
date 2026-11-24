@@ -210,7 +210,7 @@ export function logResult(turn) {
   if (!abstained) {
     const previous = state.liveTop[key] || { n: 0 };
     state.liveTop[key] = { n: previous.n + 1, q: turn.q, qa: result.qa ? result.qa.id : null };
-  } else {
+  } else if (result.reason !== 'comparison') {
     const existing = state.gaps.find(gap => (gap.qa && gap.qa === entry.qa) || (!gap.qa && gap.key === key));
     if (existing) {
       existing.count += 1;

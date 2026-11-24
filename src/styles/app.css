@@ -190,6 +190,8 @@ body.workspace { background: var(--paper); }
 .conflict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
 .conflict-grid .eyebrow { display: block; margin-bottom: 2px; }
 .conflict-grid p { font-size: 12px; color: var(--ink-2); }
+.link-button { display: block; padding: 0; border: 0; background: none; text-align: left; font-size: 12px; color: var(--ink-2); }
+.link-button:hover { color: var(--accent); text-decoration: underline; }
 
 .answer.loading { padding: 18px 22px; }
 .steps { display: flex; flex-direction: column; gap: 10px; }

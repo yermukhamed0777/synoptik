@@ -15,3 +15,7 @@ Thumbs.db
 coverage/
 
 tests/fixtures/sample.pdf
+eval/corpora/*
+!eval/corpora/README.md
+eval/*-scorecard.md
+eval/scorecard.json

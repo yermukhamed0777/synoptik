@@ -6,7 +6,7 @@
  * generation. When coverage is below the configured threshold, the result is
  * an abstention with the missing terms, not a softer answer.
  */
-import { lineAllText, matchCurated, search } from '../domain/engine.js';
+import { lineText, matchCurated, search } from '../domain/engine.js';
 import { CORPUS } from '../domain/corpus.js';
 import { AI } from '../ai/local.js';
 import { allChunks, chunkById, getIndex, pick, state } from './state.js';
@@ -77,6 +77,7 @@ export function resolveQuestion(question, qaId) {
       evidence: result.hits.map(hit => ({ chunk: hit.chunk, lines: hit.evidenceLines })),
       strength: result.strength,
       coverage: result.coverage,
+      conflict: result.conflict,
       ms: result.ms,
       scanned: result.scanned,
       missing: result.missing,
@@ -149,13 +150,13 @@ export function composeDirect(result) {
   if (result.kind === 'extractive') {
     const first = result.hits[0];
     const lineIndex = first.best?.i ?? first.lines[0];
-    let direct = lineAllText(first.chunk, lineIndex).trim();
+    let direct = lineText(first.chunk, lineIndex, state.lang).trim();
     if (direct.length > 460) direct = direct.slice(0, 457).replace(/\s+\S*$/, '') + '…';
     const details = [];
     result.hits.forEach(hit => {
       hit.lines.forEach(index => {
         if (hit === first && index === lineIndex) return;
-        if (details.length < 2) details.push(lineAllText(hit.chunk, index));
+        if (details.length < 2) details.push(lineText(hit.chunk, index, state.lang));
       });
     });
     return { direct, details };
