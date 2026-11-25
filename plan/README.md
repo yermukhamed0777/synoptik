@@ -27,4 +27,4 @@ If a session produces no code (research, interviews, scoping), still append a pr
 - **Stage:** v0.1 + M1 measurement layer, pre-pilot. M1 exit gate (real corpora) not met.
 - **Latest benchmark:** 95.4% answered-correct, 1.2% wrong, 100% refusals on the authored demo suite (110 questions). Node p95 ≈ 5–6 ms. Not a generalisation result.
 - **Tests:** 33 passing across six files; CI runs tests, benchmark and build on push/PR.
-- **Known release blockers:** answer-detail rendering bug, remote citation metadata dropped, semantic fallback bypasses abstention guards, price-conflict false positives, CSP/OCR inconsistency. See `backlog.md`.
+- **Known release blockers:** answer-detail rendering bug, remote citation metadata dropped, semantic fallback bypasses abstention guards, price-conflict false positives, CSP/OCR inconsistency (P0-1…P0-5), plus WCAG AA contrast failures, missing focus management, untranslated UI literals and contradicted UI copy (P0-7…P0-10). See `backlog.md`.

@@ -19,3 +19,5 @@ Decisions are append-only. Add a row when a choice changes direction, cost, or s
 | 2026-11-25 | Separate strategy, execution backlog, decisions and progress into `plan/` | Keeps the durable thesis stable while making the next action and its outcome unambiguous |
 | 2026-11-25 | Add GitHub Actions CI: tests, evidence benchmark, static build | Makes the quality claims reproducible for anyone cloning the repo |
 | 2026-11-25 | Use an explicit test-file list in `npm test` | `node --test tests/` fails on Node 24 when given a directory; explicit files work on every supported Node version |
+| 2026-11-25 | Keep the fictional demo corpus, but label demo mode explicitly rather than presenting seeded answers as real evidence | Authenticity means honesty about what is real; removing the demo would destroy the onboarding loop and the verified citation mapping |
+| 2026-11-25 | Fix accessibility and literal-string leaks before polishing visual detail | A public repo is judged by keyboard/screen-reader behaviour and translation parity as much as by screenshots |

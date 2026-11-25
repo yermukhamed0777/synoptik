@@ -44,6 +44,29 @@ Status legend: `[ ]` open · `[~]` in progress · `[x]` done.
 - **Do:** pick one floor per corpus class (demo regression vs. real-corpus exit gate), read it from one shared config, make the test discover sets the same way as the evaluator, and write CI scorecards to `$RUNNER_TEMP`. Unify the p95 numbers in README with the committed scorecard.
 - **Done when:** `npm test` and CI enforce the same thresholds; `npm run eval` either leaves the tree clean or is documented as an explicit regen step; README numbers match `eval/scorecard.md`.
 
+### [ ] P0-7 — Text and button contrast fails WCAG AA
+- **Where:** `src/styles/base.css:9` (`--muted: #6E7685` → 4.05:1 on paper, used at 10.5–12 px), `:44–45, 124–125` (dark primary button `#FFF8F2` on `#E47B4F` → 2.76:1, hover 2.30:1).
+- **Do:** introduce `--accent-ink` / `--accent-hover-ink`, darken light `--muted` to ≈`#5A6270`, and darken the primary button background (or switch to dark text on the light accent) until body text ≥4.5:1 and the accent button (including hover) ≥4.5:1 in both themes.
+- **Done when:** computed contrast for every token pair used for text passes AA; verified in light and dark via screenshot.
+
+### [ ] P0-8 — Overlays, mobile nav and tour have no focus management
+- **Where:** `src/ui/main.js:47–51, 160–171, 188–216, 311–314, 670–677`, `src/ui/view-state.js:16`, `src/ui/shell.js:28`, `src/ui/overlays.js`.
+- **Problem:** modals declare `role="dialog" aria-modal="true"` but have no focus trap and no background `inert`; `view.lastFocus` is never used; closing destroys focus; Escape does not dismiss the mobile nav or tour; the off-canvas rail stays focusable; the tour has no re-entry guard, overwrites the demo/scripted backup and never ends at 0:00.
+- **Do:** trap and restore focus, set `inert` on the app root while an overlay is open, wire `lastFocus`, add `aria-expanded`/`aria-controls` plus a scrim to the menu button, handle Escape for nav and tour, guard re-entry, stop overwriting user toggles, and end the coach when the countdown expires (share one countdown function with `overlays.js:236–240`).
+- **Done when:** keyboard-only run can open/close every overlay and return focus to the trigger; tour cannot be double-started and ends on its own.
+
+### [ ] P0-9 — Visible strings bypass the translation dictionaries
+- **Where:** `src/ui/pages/library.js:32`, `src/ui/pages/spots.js:56` (`Actions`), `src/ui/landing.js:62, 71`, `src/ui/shell.js:31` (`Ctrl K`), `src/ui/main.js:43, 300` (duplicated language arrays).
+- **Problem:** dictionaries are at exact structural parity (440 keys, 0 missing, 0 placeholder mismatches) but the receipt card hard-codes `42,800 ₸ — TerraShield X5, 10 L` and `EVIDENCE / 01`, the shortcut hint is macOS-blind, and language codes/autonyms duplicate `i18n/index.js`.
+- **Do:** move every remaining visible string into EN/RU/KK, derive the receipt excerpt from corpus/translations, use platform-aware `⌘K` / `Ctrl K`, and import `LANGS`.
+- **Done when:** a scan of rendered UI text finds no English literal outside the dictionaries; `tests/i18n.test.mjs` still passes.
+
+### [ ] P0-10 — UI copy and counts contradict behaviour
+- **Where:** `src/ui/main.js:134–138, 430–438`, `src/ui/pages/spots.js:78`, `src/i18n/en.js:368`, `src/ui/pages/coverage.js:53–54`.
+- **Problem:** "Mark resolved" only flips `gap.status` — it does not re-check the answer as the copy promises; coverage counts all demo docs even after removal from the Library; a fixed 4×170 ms artificial delay slows every answer.
+- **Do:** either implement re-verification or change the copy to "manual annotation"; compute demo counts from the same filtered document list as the Library; make the staged loading delay demo-only (or remove it).
+- **Done when:** copy matches behaviour; coverage and library agree on document count; live answers are not artificially delayed.
+
 ---
 
 ## P1 — robustness and data integrity (before design partners)
@@ -76,6 +99,30 @@ Status legend: `[ ]` open · `[~]` in progress · `[x]` done.
 - **Where:** `README.md`, `SECURITY.md`, `plan/strategy.md`, `eval/README.md`.
 - **Problem (resolved in this session where marked):** private-project wording, stale p95, "three curated comparisons", "only jsDelivr", "fails the build", "strict CSP", legacy-name scan claim. Remaining: `eval/README.md:26` implies browser latency; `eval/README.md:28` implies tag groups in Markdown; `plan/strategy.md` open questions and §13 checklist are stale.
 - **Done when:** a fresh read of every public doc matches the code; the open questions in `plan/strategy.md` are either answered with a dated decision or explicitly parked.
+
+### [ ] P1-6 — ARIA completeness in quick search, blind-spot tabs and settings
+- **Where:** `src/ui/overlays.js:197–207` (combobox without `listbox`, `aria-controls`, `aria-activedescendant`), `src/ui/pages/spots.js:44–45` (tabs without `tabpanel`, id linkage or arrow-key navigation), `src/ui/pages/settings.js:33, 34, 42` (unnamed `role="group"`).
+- **Done when:** a screen-reader audit finds no orphaned ARIA roles; arrow keys switch tabs; every group has an accessible name.
+
+### [ ] P1-7 — Localized HTML shell metadata and honest CSP copy
+- **Where:** `build.mjs:31–55, 63–79`, `dist/index.html:8–22`, `dist/app.html:8–22`, `src/ui/format.js:20, 26`, `src/ui/pages/ask.js:168`, `src/ui/pages/coverage.js:112, 145`.
+- **Problem:** generated `<title>`, meta description, OG tags, `<noscript>` and `<html lang>` stay English; inline `style=` attributes (`ask.js:317`, `library.js:46`, `coverage.js:109, 123, 134`) force `style-src 'unsafe-inline'`; unit labels `ms`, `B/KB/MB`, `OCR` are English.
+- **Do:** generate localized or neutral brand-only metadata plus canonical/OG-image/theme-color; move inline styles to CSS classes and tighten to `style-src 'self'`; localize unit labels; keep `connect-src` narrowing coupled to P0-5.
+- **Done when:** both shells render correct metadata in all three languages; CSP no longer needs `'unsafe-inline'` for styles.
+
+### [ ] P1-8 — Demo framing vs. authentic product presentation
+- **Where:** `src/ui/components.js:37–43` (DEMO CORPUS chip), `src/ui/shell.js:19` (rail tour), `src/ui/landing.js:59–77` (fictional TerraShield receipt), `src/i18n/{en,ru,kk}.js` (fictional-company copy), `src/brand.js:7–8`.
+- **Do:** keep the fictional corpus as the default first-run experience, but make "Demo" an explicit, consistently labelled mode; keep the fictional-company disclaimer visible; do not present seeded demo answers as real customer evidence. Add a one-click path to switch to a real workspace.
+- **Done when:** no surface implies the demo data is real; the README, landing page and app use the same terminology for demo vs. live.
+
+### [ ] P1-9 — Remove dead code, wire or delete dead translations, add UI tests
+- **Where:** 28 unused keys in each dictionary (`en.js`, `ru.js`, `kk.js`); `src/ui/components.js:53, 65`, `src/ui/format.js:38`, `src/ui/view-state.js:16`, `src/brand.js:4–5, 8`, unused icons `spark`/`clock`/`filter`; duplicated `esc`/`t`/countdown/language arrays; `src/ui/pages/library.js:79–86` (nested interactive dropzone).
+- **Do:** wire or delete the dead keys (e.g. `nav.site.aria`, `ob.skip`, `toast.copied`), delete dead exports, consolidate the duplicated helpers, make the sample action a sibling of the dropzone, and add `tests/ui/*.test.mjs` smoke tests (route rendering, overlay focus, translation of previously hard-coded strings).
+- **Done when:** no unused exports remain; UI modules have automated coverage; i18n tests stay green.
+
+### [ ] P1-10 — Small data and display defects
+- **Where:** `src/app/ask.js:101, 185–222` (remote citation naming — part of P0-2), `src/ui/format.js:20, 31–36` (`fmtSize` rounds 1,025 B to "1 KB"; unvalidated remote `strength` renders `strength.<unknown>`), `src/ui/pages/library.js:95` (missing `img` filter for uploaded images), `src/ui/overlays.js:21` (`Date.now()` fallback for missing `ts`).
+- **Done when:** sizes are accurate, strength is validated against the known set, image uploads are filterable, and missing dates render as `—`.
 
 ---
 
