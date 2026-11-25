@@ -213,7 +213,7 @@ See [SECURITY.md](SECURITY.md) for the disclosure policy and known limits.
 
 ## Roadmap
 
-The market thesis and milestones live in [plan/strategy.md](plan/strategy.md). The executable backlog, decision log and progress log live in [plan/README.md](plan/README.md). The short version: harden real-corpus accuracy, add a server-side index with accounts and an audit trail, then sell the evidence workflow to multilingual industrial distributors and compliance teams — not another general chatbot.
+The three-horizon roadmap (short / mid / long term, split into my work and yours) lives in [plan/roadmap.md](plan/roadmap.md). The market thesis and session history live in [plan/strategy.md](plan/strategy.md). The executable backlog, decision log and progress log are indexed in [plan/README.md](plan/README.md). The short version: harden real-corpus accuracy, add a server-side index with accounts and an audit trail, then sell the evidence workflow to multilingual industrial distributors and compliance teams — not another general chatbot.
 
 ---
 

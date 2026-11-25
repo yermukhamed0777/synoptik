@@ -21,3 +21,6 @@ Decisions are append-only. Add a row when a choice changes direction, cost, or s
 | 2026-11-25 | Use an explicit test-file list in `npm test` | `node --test tests/` fails on Node 24 when given a directory; explicit files work on every supported Node version |
 | 2026-11-25 | Keep the fictional demo corpus, but label demo mode explicitly rather than presenting seeded answers as real evidence | Authenticity means honesty about what is real; removing the demo would destroy the onboarding loop and the verified citation mapping |
 | 2026-11-25 | Fix accessibility and literal-string leaks before polishing visual detail | A public repo is judged by keyboard/screen-reader behaviour and translation parity as much as by screenshots |
+| 2026-11-25 | Structure the plan into short / mid / long term and split every milestone into Intelligence (my work) and Human (your work) | Makes the next action unambiguous and prevents work from stalling on tasks only one of us can do |
+| 2026-11-25 | Keep Vercel + Supabase as defaults, but require a named milestone before adding any other vendor | The product promise is no document uploads and no keys; infrastructure must not quietly break it |
+| 2026-11-25 | Any hosted model or third-party analytics that sees document text or questions stays opt-in | Preserves the local-first privacy story and the regulated-buyer positioning |

@@ -4,6 +4,8 @@ Ordered by risk, not by convenience. Every item has a **Done when** line; do not
 
 Status legend: `[ ]` open · `[~]` in progress · `[x]` done.
 
+Horizon map: **P0 / P1 = short term** (see S1–S11 in [roadmap.md](roadmap.md)), **M1 / M2 = midterm**, **M3 and the business milestones = long term**. Every item here is Intelligence work unless the roadmap's Human column says otherwise. The human-only actions live in the roadmap, not here.
+
 ---
 
 ## P0 — release blockers (fix before asking anyone to trust a real answer)

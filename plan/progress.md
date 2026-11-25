@@ -38,3 +38,12 @@ Append one entry per work session. Format:
 - i18n finding: EN/RU/KK dictionaries are at exact structural parity (440 keys each, 0 missing, 0 placeholder mismatches); the gaps are UI strings that bypass them, not missing translations.
 - Verified again after the plan edits: 33/33 tests pass; `node build.mjs` produces a 2.11 MB `dist/`; benchmark unchanged at 95.4% / 1.2% / 100%. CI run `45591322698` started on the pushed commit.
 - Open: P0-1…P0-10 are all still unchecked; none of the code fixes have been made yet — this session produced the plan only.
+
+### 2026-11-25 — Three-horizon roadmap, work split and expansion options
+
+- Created `plan/roadmap.md`. It divides the plan into **short term** (S1–S11, easy next actions I will take), **midterm** (M1 evidence quality, M2 team workspace and audit, M3 blind-spot workflow, plus GTM proof) and **long term** (the product awaiting: an audit-grade evidence layer for document-heavy multilingual teams, with deployment, vertical and business-shape exit criteria).
+- Every milestone is split into **Intelligence** (coding, CLI, plugins/MCP, evals, docs, Vercel/Supabase deployment) and **Human** (friend/colleague demos, design-partner permissions, pricing, legal, integrator conversations, case studies).
+- Added an expansion table of alternatives to Vercel and Supabase: Cloudflare Pages/Workers, Netlify, GitHub Pages, Render, Fly.io, AWS Amplify, Neon, PlanetScale, CockroachDB, Turso, Qdrant, Weaviate, Pinecone, Clerk, Auth0, WorkOS, Logto, Cloudflare R2, S3, Backblaze B2, Deno Deploy, Sentry, Better Stack, Grafana Cloud, PostHog, Plausible, Ollama, Langfuse, Braintrust, Stripe, Paddle, Lemon Squeezy, Resend, Postmark, VitePress, Docusaurus, Mintlify, GrowthBook, Unleash, Docker/Coolify/Portainer, Renovate and CodeQL. Selection rule: cheapest boring option that keeps document text under customer control.
+- Added a condensed session-history table to `plan/strategy.md` §15; linked the roadmap from README and the plan index; updated the plan convention to require roadmap and session-history updates.
+- Verified after the edits: no code changed, so the earlier verification still holds — 33/33 tests, 95.4% / 1.2% / 100%, 2.11 MB build. Both CI runs on `main` completed successfully.
+- Open: S1 (P0-1) is the next action; no deployment to Vercel or Supabase scaffold has been executed yet — those are S8 and S9.

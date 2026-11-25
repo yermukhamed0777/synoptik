@@ -255,4 +255,16 @@ Anti-metrics: number of documents uploaded, number of questions asked without a 
 
 ## 14. Decision and progress logs
 
-Strategic decisions are recorded in [decisions.md](decisions.md), executed work in [progress.md](progress.md), and the next concrete actions in [backlog.md](backlog.md). These files are updated after each work session; see [README.md](README.md) for the convention.
+Strategic decisions are recorded in [decisions.md](decisions.md), executed work in [progress.md](progress.md), and the next concrete actions in [backlog.md](backlog.md). The three-horizon plan with the human / intelligence work split is [roadmap.md](roadmap.md). These files are updated after each work session; see [README.md](README.md) for the convention.
+
+## 15. Session history — exactly what was done
+
+Full detail, including commands and results, is appended to [progress.md](progress.md). This table is the condensed record.
+
+| Date | Session | Exactly what was done |
+|---|---|---|
+| 2026-11-24 | Rebuild (historical) | New codebase and identity, corpus rebrand, clean history, initial tests, docs and visual verification. Recorded in the decision log. |
+| 2026-11-25 | M1 measurement layer (historical) | Built `scripts/evaluate.mjs` with per-question scoring, tags, calibration, thresholds and JSON/Markdown scorecards; added 110 EN/RU/KK questions; rewrote tokenisation (concept map, Cyrillic inflection, transliteration, units, typos, stopwords); added intent routing, money-line selection, comparison refusal and price conflicts; changed grading to the displayed answer line; reached 95.4% / 1.2% / 100% with 33 tests green. |
+| 2026-11-25 | Repository publication and plan setup | Created public `yermukhamed0777/synoptik` and connected `origin`; added LICENSE, THIRD_PARTY_NOTICES, CONTRIBUTING, CHANGELOG, CI workflow and CI badge; fixed `npm test` (explicit file list); moved `PLAN.md` → `plan/strategy.md`; split decision/progress logs; created `backlog.md`, `README.md` and the update convention; reconciled private-project wording, stale p95, comparison count, CSP and brand-scan claims in README/SECURITY. Verified 33/33 tests, 95.4% / 1.2% / 100%, 2.11 MB build. |
+| 2026-11-25 | Full inspection folded into the backlog | Read-only audit of all 33 source modules, tests, eval, scripts, docs and both HTML shells; confirmed `dist/assets/*` identical to `src/*`; added P0-7…P0-10 (contrast, focus management, untranslated literals, false copy) and P1-6…P1-10 (ARIA, localized metadata/CSP, demo framing, dead code and UI tests, display defects) to the backlog; recorded the demo-mode and accessibility decisions. |
+| 2026-11-25 | Three-horizon roadmap and work split | Created `plan/roadmap.md`: short-term next steps (S1–S11), midterm milestones (M1–M3 + GTM proof), long-term product shape and exit criteria; split every milestone into **Intelligence** (my coding/CLI/plugins/deployment work) and **Human** (your conversations, permissions, legal and demo work); added an expansion table of alternatives to Vercel and Supabase with selection rules; added this session history. |
