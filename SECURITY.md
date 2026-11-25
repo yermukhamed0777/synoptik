@@ -6,7 +6,7 @@ Synoptik v0.1 is local-first. Documents are parsed and indexed inside the browse
 
 The only network requests the product can make are:
 
-1. **Optional local model** — if you enable Settings → Semantic search + OCR, the browser fetches `@huggingface/transformers`, `multilingual-e5-small`, `pdfjs-dist` and `tesseract.js` from jsDelivr. This is off by default and gated by a user action.
+1. **Optional local model** — if you enable Settings → Semantic search + OCR, the browser fetches `@huggingface/transformers`, `multilingual-e5-small`, `pdfjs-dist` and `tesseract.js` from jsDelivr, and model weights from Hugging Face. It is off by default and gated by a user action on first enable; once saved in settings, it re-enables automatically on reload.
 2. **Optional custom backend** — if you enter a URL in Settings, the page POSTs the question and language to that URL. Only the URL is stored. No key is accepted or transmitted by Synoptik.
 
 The static build contains no secrets and requires no environment variables.
@@ -20,16 +20,16 @@ The static build contains no secrets and requires no environment variables.
 
 ## Content security
 
-- Both HTML shells set a strict `Content-Security-Policy`: no inline scripts, `object-src 'none'`, `base-uri 'self'`.
+- Both HTML shells set a `Content-Security-Policy`: no inline scripts, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`. `style-src` currently allows inline styles, and `connect-src 'self' https:` permits operator-chosen HTTPS backends.
 - All document-derived text is HTML-escaped before rendering. Highlighting is applied with `<mark>` around escaped text, never with unescaped HTML.
 - The page never evaluates document content.
-- PDFs are processed by the vendored pdf.js build with evaluation disabled.
+- The primary PDF path uses the vendored pdf.js build with evaluation disabled. The optional OCR path currently loads pdf.js from jsDelivr and does not set that flag; see the backlog for the fix.
 
 ## Repository hygiene
 
-- `tests/brand.test.mjs` fails if credential-shaped strings (`sk-…`, `ghp_…`, `AIza…`, private keys, `api_key = …`) or legacy product names enter `src/`.
+- `tests/brand.test.mjs` fails if credential-shaped strings (`sk-…`, `ghp_…`, `AIza…`, private keys, `api_key = …`) or unexpected email addresses enter `src/`.
 - `.gitignore` excludes `.env*`, private keys, `node_modules`, `dist` and build artifacts.
-- No CI secrets are required. The build is a copy plus two static HTML files.
+- `.github/workflows/ci.yml` runs tests, the evidence benchmark and the build on every push and pull request. No CI secrets are required.
 
 ## Known limitations / threat model notes
 
@@ -45,12 +45,12 @@ The static build contains no secrets and requires no environment variables.
 
 ## Reporting
 
-This is a private project. Report issues directly to the maintainer rather than opening a public issue. Include reproduction steps, affected browser, and whether data exposure is involved.
+Please report security issues privately to the maintainer rather than in a public issue, using GitHub's private vulnerability reporting on this repository if available. Include reproduction steps, affected browser, and whether data exposure is involved.
 
 ## Pre-release checklist
 
 ```bash
-npm test                      # or run each tests/*.test.mjs directly
+npm test                      # runs every tests/*.test.mjs file
 node build.mjs
 # review dist/, confirm no unexpected origins in CSP
 # confirm no .env, keys, tokens, personal data in git status

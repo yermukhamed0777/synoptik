@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Tests
+        run: npm test
+
+      - name: Evidence benchmark
+        run: node scripts/evaluate.mjs --all --md "${RUNNER_TEMP}/scorecard.md"
+
+      - name: Build static site
+        run: node build.mjs
+
+      - name: Verify build output
+        run: |
+          test -f dist/index.html
+          test -f dist/app.html
+          test -f dist/vendor/pdf.min.mjs

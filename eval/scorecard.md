@@ -1,6 +1,6 @@
 # Synoptik evidence scorecard
 
-Generated: 2026-11-24T18:09:56.192Z
+Generated: 2026-11-25T09:57:37.613Z
 Corpus: demo
 
 | Metric | Value |
@@ -12,8 +12,8 @@ Corpus: demo
 
 | Set | Answered-correct | Wrong | Missed | Refusals | p95 |
 | --- | --- | --- | --- | --- | --- |
-| demo-curated | 95.5% | 0 | 3 | 100.0% | 3.74 ms |
-| demo-paraphrase | 95.2% | 1 | 0 | 100.0% | 3.62 ms |
+| demo-curated | 95.5% | 0 | 3 | 100.0% | 5.25 ms |
+| demo-paraphrase | 95.2% | 1 | 0 | 100.0% | 6.07 ms |
 
 ## Failures
 

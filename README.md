@@ -2,6 +2,8 @@
 
 **Every answer, on the record.**
 
+[![CI](https://github.com/yermukhamed0777/synoptik/actions/workflows/ci.yml/badge.svg)](https://github.com/yermukhamed0777/synoptik/actions/workflows/ci.yml)
+
 Synoptik is an evidence-first retrieval workspace for business documents. Ask a question in plain language; get a short answer, the exact passage it came from, and the file and location — or an explicit refusal when the documents do not support an answer.
 
 English · Русский · Қазақша. Runs entirely in the browser. No account, no API key, no upload endpoint.
@@ -51,7 +53,7 @@ This is a working v0.1, not a mockup. It is also deliberately honest about its e
 | Evidence validation and abstention | **Real**: IDF-weighted coverage; identifier traps (20 L vs 10 L), conflicting prices and comparison questions are handled explicitly |
 | Answers | **Extractive**: the sentence shown is copied from a retrieved line, never generated |
 | Conflicting documents | **Real** for prices: when a price list and a catalog disagree, the price list wins and both values are shown |
-| Comparison questions | **Refused** in live retrieval until comparison composition exists; the three curated demo comparisons still answer |
+| Comparison questions | **Refused** in live retrieval until comparison composition exists; one curated demo comparison still answers |
 | Demo corpus (7 documents, 28 passages, 27 questions) | Pre-written, fictional company, curated demo answers labelled *pre-verified* |
 | Optional local semantic search | multilingual-e5-small via Transformers.js, on-device, off by default |
 | Accounts, roles, audit log, server-side index | **Not implemented** |
@@ -63,8 +65,8 @@ This is a working v0.1, not a mockup. It is also deliberately honest about its e
 
 | Set | Answerable correct | Wrong | Refusals | p95 |
 |---|---|---|---|---|
-| Curated (81 questions, 3 languages) | 95.5% | 0 | 100% | 5.9 ms |
-| Paraphrase / traps (29 questions) | 95.2% | 1 | 100% | 5.8 ms |
+| Curated (81 questions, 3 languages) | 95.5% | 0 | 100% | 5.25 ms |
+| Paraphrase / traps (29 questions) | 95.2% | 1 | 100% | 6.07 ms |
 | **Combined** | **95.4%** | **1.2% of answers** | **100%** | — |
 
 Full scorecard and failure list: [eval/scorecard.md](eval/scorecard.md). The remaining failures are three live comparison questions (refused by design) and one primer question that quotes the wrong compatibility line. Real-corpus scorecards from design partners are the number that matters next.
@@ -88,16 +90,7 @@ There is no dependency install step. The build copies native ES modules and two 
 npm test                 # node --test tests/
 ```
 
-If the test runner cannot spawn workers in a restricted environment, run files directly:
-
-```bash
-node tests/engine.test.mjs
-node tests/corpus.test.mjs
-node tests/i18n.test.mjs
-node tests/parsers.test.mjs
-node tests/brand.test.mjs
-node tests/retrieval-quality.test.mjs
-```
+`npm test` runs all six test files with Node's built-in test runner — no worker spawning and no dependencies. To run a subset, invoke the files directly, e.g. `node tests/engine.test.mjs`.
 
 The suite covers tokenisation and BM25 behaviour, the identifier guard, refusals, price conflicts, corpus integrity (every curated citation points at a real line), translation parity, parser fixtures (DOCX/XLSX/CSV/TXT), a demo-corpus retrieval floor, and a scan for credential-shaped strings.
 
@@ -200,17 +193,17 @@ An answer without citations is rendered as a refusal.
 - Documents are parsed and indexed in the tab. There is no upload endpoint.
 - State is stored in `localStorage` under `synoptik.state.v1`. Settings → Reset clears it.
 - No API keys are required, shipped or stored. The optional backend field accepts a URL only.
-- A strict Content-Security-Policy is set in both HTML shells. The only third-party origin allowed is jsDelivr, used solely when the optional local model is enabled.
+- Both HTML shells set a Content-Security-Policy: scripts execute only from `self` (plus jsDelivr for the optional local model and a blob worker), and `connect-src` permits `self` and operator-chosen HTTPS endpoints. Model weights are normally fetched from Hugging Face when the local model is enabled. The CSP is not "only jsDelivr" — see [SECURITY.md](SECURITY.md) for the exact posture.
 - The demo corpus is fictional: Zhaiyk Coatings, `support@zhaiyk-coatings.example`, synthetic prices and policies. No real customer data is included.
-- `tests/brand.test.mjs` fails the build if credential-shaped strings enter `src/`.
+- `tests/brand.test.mjs` fails `npm test` if credential-shaped strings or unexpected emails enter `src/`; CI runs it on every push.
 
 See [SECURITY.md](SECURITY.md) for the disclosure policy and known limits.
 
 ## Known limitations
 
 - Lexical retrieval misses pure synonyms. The optional local embedding model is the answer; it is not enabled by default.
-- Comparison questions ("difference between A and B") are refused in live retrieval. The curated demo answers cover them, but composition is an M1/M2 item.
-- Price-conflict detection is a conservative heuristic: it needs a shared product term, an explicit currency and a price/catalog document name. It does not reconcile units, tiers or dated price lists yet.
+- Comparison questions ("difference between A and B") are refused in live retrieval. One curated demo answer covers a comparison, but composition is an M1/M2 item.
+- Price-conflict detection is a conservative heuristic: it needs a shared query term, a tenge amount and a price/catalog document name. It does not verify that the *same product* appears on both sides, handle other currencies, or reconcile units, tiers and dated price lists yet.
 - The 95.4% scorecard is a regression suite written against the demo corpus, not evidence of real-world accuracy. Design-partner corpora are the next measurement.
 - The lightweight PDF stream parser handles simple text streams only. Use the bundled pdf.js path for normal PDFs; scans need OCR.
 - XLSX parsing covers sheets, merged cells, dates and header detection, not formulas or charts.
@@ -220,8 +213,8 @@ See [SECURITY.md](SECURITY.md) for the disclosure policy and known limits.
 
 ## Roadmap
 
-The product plan, milestones, market thesis and open questions are in [PLAN.md](PLAN.md). The short version: harden real-corpus accuracy, add a server-side index with accounts and an audit trail, then sell the evidence workflow to multilingual industrial distributors and compliance teams — not another general chatbot.
+The market thesis and milestones live in [plan/strategy.md](plan/strategy.md). The executable backlog, decision log and progress log live in [plan/README.md](plan/README.md). The short version: harden real-corpus accuracy, add a server-side index with accounts and an audit trail, then sell the evidence workflow to multilingual industrial distributors and compliance teams — not another general chatbot.
 
 ---
 
-Private project. Demo data is fictional. Third-party components retain their own licences (`vendor/pdf.js` — Apache-2.0).
+Source is published for evaluation and review; commercial use requires permission — see [LICENSE](LICENSE). Demo data is fictional. Third-party components retain their own licences (`vendor/pdf.js` — Apache-2.0).

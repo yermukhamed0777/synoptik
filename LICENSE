@@ -1,0 +1,11 @@
+Copyright (c) 2026 Synoptik. All rights reserved.
+
+Synoptik is published as source for evaluation, demonstration and review.
+No licence, express or implied, is granted to use, copy, modify or distribute
+this software, in source or built form, for commercial purposes without
+written permission from the copyright holder.
+
+Third-party components retain their own licences:
+
+- vendor/pdf.min.mjs and vendor/pdf.worker.min.mjs — pdf.js, Apache-2.0
+  (https://github.com/mozilla/pdf.js/blob/master/LICENSE)

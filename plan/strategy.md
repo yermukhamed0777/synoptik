@@ -116,7 +116,7 @@ Marketing site changes for Phase A:
 
 ### M0 — Rebuild and freeze (done)
 Scope: new identity, new codebase, corpus rebrand, tests, docs, visual verification.
-Exit criteria: build passes; all test files pass; core loop verified in Chrome; no legacy names or credentials in `src/`; `PLAN.md` agreed.
+Exit criteria: build passes; all test files pass; core loop verified in Chrome; no legacy names or credentials in `src/`; `plan/strategy.md` agreed.
 
 ### M1 — Evidence quality in the wild (in progress)
 Goal: the product is trustworthy on real, messy documents.
@@ -248,34 +248,11 @@ Anti-metrics: number of documents uploaded, number of questions asked without a 
 - [ ] Fix the top 5 extraction/retrieval failures found on that corpus.
 - [ ] Add a comparison-composition path (two cited lines, not one) or keep the refusal and document it.
 - [ ] Record a 3-minute walkthrough of the current demo for outbound.
-- [ ] Decide on the legacy repo cleanup and the `synoptik` remote.
+- [x] Create the public `synoptik` remote and connect `origin`.
+- [ ] Decide on the legacy repo cleanup.
 - [ ] Write the one-page security summary for buyers.
 - [ ] Draft the pilot agreement and success criteria.
 
-## 14. Decision log
+## 14. Decision and progress logs
 
-| Date | Decision | Why |
-|---|---|---|
-| 2026-11-24 | Rebuild under the name Synoptik, not a rename in place | Remove legacy identity and history; new IA and visual language |
-| 2026-11-24 | Keep the demo corpus domain (coatings) but replace the fictional company | Preserves verified evidence mapping while removing the old identity |
-| 2026-11-24 | Zero runtime/build dependencies | Auditability, offline demo, regulated-buyer story, no supply-chain surface |
-| 2026-11-24 | Blind spots as a first-class surface, not analytics | The refusal workflow is the durable differentiator |
-| 2026-11-24 | Extractive answers only in v0.1 | A generated sentence without a receipt undermines the product promise |
-| 2026-11-25 | Default to demo corpus on first run | Immediate value; the refusal and citation loop is visible in one click |
-| 2026-11-25 | Grade the answer line, not the evidence set | A lower evidence hit with the right number must not mask a wrong top answer |
-| 2026-11-25 | Prefer price list over catalog when amounts conflict, and show both | The most common real ambiguity for distributors; the user needs the disagreement, not a silent choice |
-| 2026-11-25 | Refuse live comparison questions until composition exists | Quoting one side of a comparison is a wrong answer with a receipt |
-| 2026-11-25 | Freeze tuning at 95.4% on the authored demo suite | Further gains on 110 authored questions would be overfitting; real corpora are the next signal |
-
-## 15. Progress log
-
-### 2026-11-25 — M1 measurement layer
-
-- Built `scripts/evaluate.mjs`: per-question scoring, tag breakdown, calibration, JSON/Markdown scorecards, thresholds that fail CI, real-corpus directory support.
-- Added 110 demo-corpus questions across EN/RU/KK, including typos, transliteration, unit variants, identifier traps, unanswerable questions and price conflicts.
-- Rewrote tokenisation: cross-language concept mapping (price/delivery/warranty/return), Cyrillic inflection stripping, transliteration, unit/currency normalisation, English light stemming, typo/prefix aliases, stopword expansion.
-- Added document-intent routing, money-line selection for price questions, and a comparison refusal guard.
-- Added generic price-conflict detection with source links and price-list-over-catalog precedence.
-- Fixed the scorecard to grade the displayed answer line; this exposed 12 hidden wrong answers that the previous "any evidence hit" grading had masked.
-- Result: 95.4% answered-correct, 1.2% wrong, 100% refusals on the authored demo suite; 33 tests green.
-- Remaining known failures: three live comparison questions (refused by design) and one primer question that quotes the wrong compatibility line. Both are on the M1 real-corpus list.
+Strategic decisions are recorded in [decisions.md](decisions.md), executed work in [progress.md](progress.md), and the next concrete actions in [backlog.md](backlog.md). These files are updated after each work session; see [README.md](README.md) for the convention.
