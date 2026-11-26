@@ -17,12 +17,12 @@ const ICON = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
 
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' blob: https://cdn.jsdelivr.net",
+  "script-src 'self' 'wasm-unsafe-eval' blob: https://cdn.jsdelivr.net",
   "worker-src 'self' blob:",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self' https:",
+  "connect-src 'self' https: http://localhost:* http://127.0.0.1:*",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

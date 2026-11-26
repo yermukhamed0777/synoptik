@@ -3,9 +3,9 @@
  * search, onboarding and the guided demo.
  */
 import { AI } from '../ai/local.js';
-import { allChunks, citeStr, docById, files, hooks, logResult, rebuild, resetWorkspace, save, state, t } from '../app/state.js';
+import { LANGS, allChunks, citeStr, docById, files, hooks, logResult, rebuild, resetWorkspace, save, state, t } from '../app/state.js';
 import { addSample, processUpload } from '../app/state.js';
-import { plainAnswer, qaById, questionText, remoteAsk, resolveQuestionAsync } from '../app/ask.js';
+import { plainAnswer, qaById, questionText, remoteAsk, validEndpoint, resolveQuestionAsync } from '../app/ask.js';
 import { CORPUS } from '../domain/corpus.js';
 import { esc } from './format.js';
 import { icon } from './icons.js';
@@ -40,14 +40,20 @@ const pageFor = route => {
 function applyTheme() {
   const dark = state.theme === 'dark' || (state.theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  document.documentElement.lang = ['en', 'ru', 'kk'][state.lang];
+  document.documentElement.lang = LANGS[state.lang].code;
   document.title = `${t('app.name')} — ${t('app.tagline')}`;
 }
 
 function renderOverlays() {
+  const active = document.activeElement;
+  if (!view.lastFocus && !root.inert && root.contains(active)) view.lastFocus = active;
   overlayRoot.innerHTML = overlays();
-  const target = document.getElementById('quick-input') || document.getElementById('onboard-next') || document.getElementById('tour-next');
-  if (target && !overlayRoot.contains(document.activeElement)) target.focus();
+  const dialogs = [...overlayRoot.querySelectorAll('[role="dialog"]')];
+  const modal = dialogs.filter(d => d.getAttribute('aria-modal') === 'true').at(-1);
+  root.inert = !!modal;
+  dialogs.forEach(d => { d.inert = !!modal && d !== modal && !d.matches('.coach'); });
+  if (modal) (modal.querySelector('#quick-input, #onboard-next') || modal.querySelector('button, input'))?.focus();
+  else if (view.lastFocus?.isConnected) { view.lastFocus.focus(); view.lastFocus = null; }
 }
 
 function render({ preserveScroll = true } = {}) {
@@ -131,11 +137,6 @@ async function ask(question, qaId = null) {
     error = caught;
   }
 
-  for (let step = 1; step <= 4; step++) {
-    await sleep(170);
-    turn.step = step;
-    if (step < 4) render();
-  }
 
   if (error) {
     turn.state = 'error';
@@ -165,7 +166,9 @@ function closeOverlay() {
     view.onboard = null;
     state.onboarded = true;
     save();
-  } else return false;
+  } else if (view.tour != null) { endTour(); return true; }
+  else if (view.navOpen) { view.navOpen = false; render(); root.querySelector('.menu-btn')?.focus(); return true; }
+  else return false;
   renderOverlays();
   return true;
 }
@@ -186,6 +189,7 @@ function runQuickItem(index) {
 let tourBackup = null;
 
 function startTour() {
+  if (view.tour != null) return;
   tourBackup = { useDemo: state.settings.useDemo, scripted: state.settings.scripted };
   state.settings.useDemo = true;
   state.settings.scripted = true;
@@ -238,6 +242,7 @@ async function tourNext() {
   else if (step === 5) go('/coverage');
 
   view.tourBusy = false;
+  if (view.tour !== step) return;
   if (step >= TOUR_LENGTH - 1) endTour();
   else {
     view.tour = step + 1;
@@ -284,6 +289,7 @@ function evidenceText(turn, index) {
 document.addEventListener('click', async event => {
   const element = event.target.closest('[data-act]');
   if (!element) return;
+  if (root.contains(element)) view.lastFocus = element;
   const action = element.dataset.act;
   const data = element.dataset;
   if (element.tagName === 'A' && ['goto', 'ask', 'document'].includes(action)) event.preventDefault();
@@ -297,7 +303,7 @@ document.addEventListener('click', async event => {
       save();
       if (state.settings.ai && AI.ready()) AI.indexChunks(allChunks(), state.lang);
       render();
-      toast(t('toast.lang', ['English', 'Русский', 'Қазақша'][state.lang]));
+      toast(t('toast.lang', LANGS[state.lang].name));
       break;
     case 'theme':
       state.theme = data.v;
@@ -470,7 +476,7 @@ document.addEventListener('click', async event => {
     }
     case 'save-endpoint': {
       const value = document.getElementById('endpoint')?.value.trim() || '';
-      if (value && !/^https?:\/\//i.test(value)) {
+      if (value && !validEndpoint(value)) {
         toast(t('toast.badurl'), 'error');
         break;
       }
@@ -609,6 +615,12 @@ document.addEventListener('change', event => {
 });
 
 document.addEventListener('keydown', event => {
+  const dialog = [...overlayRoot.querySelectorAll('[aria-modal="true"]')].at(-1);
+  if (dialog && event.key === 'Tab') {
+    const controls = [...dialog.querySelectorAll('button:not(:disabled), input, a[href], select, textarea')].filter(el => el.getClientRects().length);
+    const edge = event.shiftKey ? controls[0] : controls.at(-1);
+    if (edge && document.activeElement === edge) { event.preventDefault(); (event.shiftKey ? controls.at(-1) : controls[0]).focus(); }
+  }
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
     event.preventDefault();
     if (view.quick) view.quick = null;
@@ -672,6 +684,7 @@ setInterval(() => {
   if (clock && view.tour != null) {
     const elapsed = Math.floor((Date.now() - (view.tourStarted || Date.now())) / 1000);
     const remaining = Math.max(0, 180 - elapsed);
+    if (!remaining) { endTour(); return; }
     clock.textContent = Math.floor(remaining / 60) + ':' + String(remaining % 60).padStart(2, '0');
   }
 }, 1000);

@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildIndex, entities, keyTerms, search, stem, tokenize } from '../src/domain/engine.js';
-import { CHUNKS } from '../src/domain/corpus.js';
+import { CHUNKS, DOCS } from '../src/domain/corpus.js';
 
-const index = buildIndex(CHUNKS);
+const index = buildIndex(CHUNKS.map(chunk => ({ ...chunk, docName: DOCS.find(doc => doc.id === chunk.doc)?.name })));
 
 test('tokenizer drops stopwords and keeps numbers', () => {
   const terms = tokenize('How much does the 10 L pack cost?').map(token => token.raw);

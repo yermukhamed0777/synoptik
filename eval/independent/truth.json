@@ -1,0 +1,103 @@
+{
+  "files": {
+    "alloy-catalog.xlsx": {
+      "text": "148.75",
+      "loc": {
+        "sheet": "Prices 2026"
+      }
+    },
+    "freight.docx": {
+      "text": "18-22",
+      "loc": {
+        "para": "1–4"
+      }
+    },
+    "price-list.csv": {
+      "text": "USD 152.50",
+      "loc": {
+        "rows": "2–3"
+      }
+    },
+    "returns-2025.txt": {
+      "text": "12 days"
+    },
+    "returns-2026.md": {
+      "text": "16 days"
+    },
+    "operator-note.txt": {
+      "text": "<b>operator note</b>"
+    },
+    "thermal.pdf": {
+      "text": "680 C",
+      "loc": {
+        "page": 1
+      }
+    },
+    "scan.pdf": {
+      "error": "pdf-text"
+    },
+    "malformed.docx": {
+      "error": "zip"
+    }
+  },
+  "questions": [
+    [
+      "What is the price of Alloy AX510?",
+      "price-list.csv",
+      "USD 152.50"
+    ],
+    [
+      "What is the price of Alloy AX511?",
+      "price-list.csv",
+      "EUR 175.25"
+    ],
+    [
+      "CL720 continuous temperature limit?",
+      "thermal.pdf",
+      "680 C"
+    ],
+    [
+      "Who pays customs duties?",
+      "freight.docx",
+      "paid by the buyer"
+    ],
+    [
+      "Где хранятся образцы?",
+      "returns-2026.md",
+      "сухой шкаф"
+    ],
+    [
+      "Үлгілер қайда сақталады?",
+      "returns-2026.md",
+      "құрғақ шкафта"
+    ],
+    [
+      "Compare AX510 versus AX511",
+      null
+    ],
+    [
+      "What is the thickness of AX512?",
+      null
+    ],
+    [
+      "What is the lunar orbital period?",
+      null
+    ],
+    [
+      "What is the price?",
+      null
+    ],
+    [
+      "How long can I return a ceramic liner?",
+      null
+    ],
+    [
+      "What is the AX510 price in euros?",
+      null
+    ],
+    [
+      "What is the AX510 thickness in inches?",
+      null
+    ]
+  ]
+}

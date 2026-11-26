@@ -12,7 +12,8 @@ import { CHUNKS, DOCS } from '../src/domain/corpus.js';
    worse. Real-corpus evidence belongs in eval/corpora and the scorecard. */
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const sets = ['demo-curated.json', 'demo-paraphrase.json'].map(name =>
+import {demoFloor} from '../eval/floors.mjs';
+const sets = fs.readdirSync(path.join(root,'eval','sets')).filter(name => name.endsWith('.json')).sort().map(name =>
   JSON.parse(fs.readFileSync(path.join(root, 'eval', 'sets', name), 'utf8'))
 );
 
@@ -59,7 +60,7 @@ test('demo-corpus retrieval stays above the regression floor', () => {
     `    answerable ${totals.correct}/${totals.answerable} (${(answeredCorrectRate * 100).toFixed(1)}%), ` +
       `wrong ${totals.wrong}, refusals ${totals.refused}/${totals.unanswerable}`
   );
-  assert.ok(answeredCorrectRate >= 0.9, `answered-correct dropped to ${(answeredCorrectRate * 100).toFixed(1)}%`);
-  assert.ok(wrongRate <= 0.05, `wrong answers rose to ${(wrongRate * 100).toFixed(1)}%`);
-  assert.ok(refusalAccuracy >= 0.95, `refusal accuracy dropped to ${(refusalAccuracy * 100).toFixed(1)}%`);
+  assert.ok(answeredCorrectRate >= demoFloor.answered, `answered-correct dropped to ${(answeredCorrectRate * 100).toFixed(1)}%`);
+  assert.ok(wrongRate <= demoFloor.wrong, `wrong answers rose to ${(wrongRate * 100).toFixed(1)}%`);
+  assert.ok(refusalAccuracy >= demoFloor.refusal, `refusal accuracy dropped to ${(refusalAccuracy * 100).toFixed(1)}%`);
 });

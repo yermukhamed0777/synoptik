@@ -59,7 +59,7 @@ const themeButton = () => `
 const receipt = () => `
   <div class="receipt" role="figure" aria-label="${esc(t('lp.receipt.title'))}">
     <div class="receipt-head">
-      <span class="receipt-index">EVIDENCE / 01</span>
+      <span class="receipt-index">${esc(t('ans.evidence'))} / 01</span>
       <span class="badge ok">${icon('check', 'xs')}${esc(t('lp.receipt.conf'))}</span>
     </div>
     <p class="receipt-question">${esc(t('lp.receipt.q'))}</p>
@@ -68,7 +68,7 @@ const receipt = () => `
       ${icon('file', 'xs')}
       <span>${esc(t('lp.receipt.src'))}</span>
     </div>
-    <div class="receipt-excerpt"><mark>42,800 ₸</mark> — TerraShield X5, 10 L</div>
+    <div class="receipt-excerpt"><mark>${esc(t('lp.receipt.a'))}</mark></div>
     <p class="receipt-note">${esc(t('lp.receipt.note'))}</p>
     <div class="receipt-foot">
       <span>${esc(t('lp.receipt.caption'))}</span>

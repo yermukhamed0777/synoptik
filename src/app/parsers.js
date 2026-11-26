@@ -12,10 +12,19 @@ import { AI } from '../ai/local.js';
 
 export const MAX_BYTES = 30 * 1048576;
 
-async function inflate(bytes, raw) {
+async function inflate(bytes, raw, budget = MAX_BYTES) {
   const stream = new DecompressionStream(raw ? 'deflate-raw' : 'deflate');
-  const buffer = await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer();
-  return new Uint8Array(buffer);
+  const reader = new Blob([bytes]).stream().pipeThrough(stream).getReader();
+  const parts = [];
+  let length = 0;
+  while (true) {
+    const {done,value} = await reader.read();
+    if (done) break;
+    length += value.length;
+    if (length > budget) { await reader.cancel(); throw Error('decompression-limit'); }
+    parts.push(value);
+  }
+  return new Uint8Array(await new Blob(parts).arrayBuffer());
 }
 
 async function unzip(buffer) {
@@ -31,7 +40,9 @@ async function unzip(buffer) {
   if (end < 0) throw new Error('zip');
   const length = view.getUint16(end + 10, true);
   let pointer = view.getUint32(end + 16, true);
-  const entries = {};
+  if (length > 4096) throw Error("archive-limit");
+  let remaining = MAX_BYTES;
+  const entries = Object.create(null);
   for (let i = 0; i < length; i++) {
     const method = view.getUint16(pointer + 10, true);
     const compressedSize = view.getUint32(pointer + 20, true);
@@ -45,7 +56,11 @@ async function unzip(buffer) {
       const localExtraLength = view.getUint16(offset + 28, true);
       const start = offset + 30 + localNameLength + localExtraLength;
       const data = bytes.subarray(start, start + compressedSize);
-      return new TextDecoder().decode(method === 0 ? data : await inflate(data, true));
+      if (![0,8].includes(method) || start + compressedSize > bytes.length) throw Error('zip');
+      const output = method === 0 ? data : await inflate(data,true,remaining);
+      remaining -= output.length;
+      if (remaining < 0) throw Error('archive-limit');
+      return new TextDecoder().decode(output);
     };
     pointer += 46 + nameLength + extraLength + commentLength;
   }
@@ -211,12 +226,15 @@ async function parseXlsx(buffer) {
       grid.set(rowNumber, cells);
     }
 
+    let mergeBudget = 100000;
     for (const merge of xml.matchAll(/<mergeCell ref="([A-Z]+)(\d+):([A-Z]+)(\d+)"/g)) {
       const startColumn = columnIndex(merge[1]);
       const startRow = Number(merge[2]);
       const endColumn = columnIndex(merge[3]);
       const endRow = Number(merge[4]);
       if (endRow <= startRow) continue;
+      mergeBudget -= (endRow - startRow) * (endColumn - startColumn + 1);
+      if (mergeBudget < 0 || endColumn >= 16384 || endRow > 1048576) throw Error("merge-limit");
       const value = (grid.get(startRow) || [])[startColumn];
       if (!value) continue;
       for (let row = startRow + 1; row <= endRow; row++) {
@@ -340,7 +358,7 @@ async function extractPdfStreams(buffer) {
 
 let pdfLibraryPromise = null;
 
-async function loadPdfLibrary() {
+export async function loadPdfLibrary() {
   if (!pdfLibraryPromise) {
     const library = await import(/* webpackIgnore: true */ new URL('../../vendor/pdf.min.mjs', import.meta.url).href);
     library.GlobalWorkerOptions.workerSrc = new URL('../../vendor/pdf.worker.min.mjs', import.meta.url).href;
@@ -598,6 +616,7 @@ export async function ocrExtract(file, type, onPage) {
 }
 
 export async function parseFile(file, type) {
+  if (file.size > MAX_BYTES) throw Error('file-limit');
   if (type === 'txt') {
     const text = await file.text();
     const paragraphs = text.split(/\n\s*\n|\r\n\s*\r\n/).map(part => part.replace(/\s+/g, ' ').trim()).filter(Boolean);

@@ -73,7 +73,7 @@ export function resolveQuestion(question, qaId) {
       q: question,
       lineCov: result.lineCov,
       partial: result.partial,
-      hits: result.hits,
+      hits: result.hits.map(({chunk, best, evidenceLines}) => ({chunk, best, lines: evidenceLines})),
       evidence: result.hits.map(hit => ({ chunk: hit.chunk, lines: hit.evidenceLines })),
       strength: result.strength,
       coverage: result.coverage,
@@ -119,27 +119,10 @@ export async function resolveQuestionAsync(question, qaId) {
     return result;
   }
 
-  const hits = good.map(item => ({
-    chunk: item.chunk,
-    lines: item.lines,
-    score: item.similarity,
-    best: { i: item.bestLine ?? item.lines[0] },
-  }));
-  return {
-    kind: 'extractive',
-    q: question,
-    partial: true,
-    semantic: true,
-    hits,
-    evidence: hits.map(hit => ({ chunk: hit.chunk, lines: hit.lines })),
-    strength: 'limited',
-    coverage: top[0].similarity,
-    ms: result.ms + performance.now() - started,
-    scanned: chunks.length,
-    missing: [],
-    topic: good[0].chunk.topic,
-    sem: result.sem,
-  };
+  // Semantic neighbours can suggest related documents, but cannot certify an answer.
+  result.related = [...new Set([...result.related, ...good.map(item => item.chunk.doc)])];
+  result.ms += performance.now() - started;
+  return result;
 }
 
 /** Build the short answer shown in the card. For live answers this is verbatim. */
@@ -156,7 +139,8 @@ export function composeDirect(result) {
     result.hits.forEach(hit => {
       hit.lines.forEach(index => {
         if (hit === first && index === lineIndex) return;
-        if (details.length < 2) details.push(lineText(hit.chunk, index, state.lang));
+        const text = lineText(hit.chunk, index, state.lang)?.trim();
+        if (text && text !== lineText(first.chunk, lineIndex, state.lang).trim() && !details.includes(text) && details.length < 2) details.push(text);
       });
     });
     return { direct, details };
@@ -182,42 +166,49 @@ export function plainAnswer(turn, t, cite) {
   ].join('\n');
 }
 
+export function validEndpoint(value) {
+  try {
+    const url = new URL(value);
+    return !url.username && !url.password && !url.hash &&
+      (url.protocol === 'https:' || (url.protocol === 'http:' && ['127.0.0.1','localhost'].includes(url.hostname)));
+  } catch { return false; }
+}
+
 export async function remoteAsk(question) {
-  const response = await fetch(state.settings.endpoint, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ question, language: ['en', 'ru', 'kk'][state.lang], threshold: state.settings.threshold }),
-  });
-  if (!response.ok) throw new Error('HTTP ' + response.status);
-  const payload = await response.json();
-  const citations = Array.isArray(payload.citations) ? payload.citations : [];
-  if (payload.status === 'abstain' || !payload.answer || !citations.length) {
-    return {
-      kind: 'abstain',
-      reason: 'remote',
-      related: [],
-      evidence: [],
-      ms: payload.ms || 0,
-      scanned: payload.scanned,
-      coverage: 0,
-      topic: 'general',
-      qa: null,
-      missing: [],
-    };
-  }
-  const evidence = citations.map((citation, index) => ({
-    chunk: { id: 'r' + index, doc: 'r' + index, loc: {}, lines: [citation.excerpt || ''], topic: 'remote', remote: citation },
-    lines: [0],
-  }));
-  return {
-    kind: 'remote',
-    direct: payload.answer,
-    details: payload.details || [],
-    evidence,
-    strength: payload.strength || 'moderate',
-    ms: payload.ms || 0,
-    scanned: payload.scanned,
-    coverage: payload.coverage ?? 1,
-    topic: 'general',
-  };
+  const start = performance.now();
+  const refusal = () => ({kind:'abstain', reason:'remote', related:[], evidence:[], missing:[], coverage:0, scanned:0, ms:performance.now()-start, topic:'general'});
+  if (!validEndpoint(state.settings.endpoint) || question.length > 8192) return refusal();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    const response = await fetch(state.settings.endpoint, {
+      method:'POST', credentials:'omit', redirect:'error', referrerPolicy:'no-referrer',
+      signal:controller.signal, headers:{'content-type':'application/json'},
+      body:JSON.stringify({question, language:['en','ru','kk'][state.lang], threshold:state.settings.threshold}),
+    });
+    if (!response.ok || Number(response.headers.get('content-length')) > 65536) return refusal();
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8',{fatal:true});
+    let size = 0, body = '';
+    while (true) {
+      const {done,value} = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 65536) return refusal();
+      body += decoder.decode(value,{stream:true});
+    }
+    const p = JSON.parse(body + decoder.decode());
+    const valid = (s, limit) => typeof s === 'string' && s.trim().length > 0 && s.length <= limit;
+    const {details = [], strength = 'moderate', scanned = 0, coverage = 1} = p;
+    if (p.status !== 'answer' || !valid(p.answer,8192) || !Array.isArray(details) || details.length > 12 ||
+      !details.every(s => valid(s,4096)) || !['strong','moderate','limited'].includes(strength) ||
+      !Number.isSafeInteger(scanned) || scanned < 0 || !Number.isFinite(coverage) || coverage < 0 || coverage > 1 ||
+      !Array.isArray(p.citations) || !p.citations.length || p.citations.length > 16 ||
+      !p.citations.every(c => c && valid(c.doc,512) && valid(c.location,512) && valid(c.excerpt,8192))) return refusal();
+    const evidence = p.citations.map((c,i) => ({
+      chunk:{id:'remote-'+i, doc:'remote-'+i, docName:c.doc, loc:{remote:c.location}, lines:[c.excerpt], topic:'remote'}, lines:[0]
+    }));
+    return {kind:'remote', direct:p.answer, details, strength, scanned, coverage, evidence, ms:performance.now()-start, topic:'general'};
+  } catch { return refusal(); }
+  finally { clearTimeout(timeout); controller.abort(); }
 }

@@ -29,7 +29,7 @@ export function libraryTable() {
       <th class="hide-md">${esc(t('lib.date'))}</th>
       <th>${esc(t('lib.status'))}</th>
       <th class="hide-sm">${esc(t('lib.chunks'))}</th>
-      <th class="col-actions"><span class="sr">Actions</span></th>
+      <th class="col-actions"><span class="sr">${esc(t('common.actions'))}</span></th>
     </tr></thead>
     <tbody>
       ${rows.map(doc => `
@@ -92,7 +92,7 @@ export function libraryPage() {
         <input id="library-search" type="search" placeholder="${esc(t('lib.search'))}" value="${esc(view.libQuery)}" autocomplete="off">
       </div>
       <div class="segmented" role="group" aria-label="${esc(t('lib.type'))}">
-        ${['all', 'pdf', 'docx', 'xlsx', 'csv', 'txt'].map(type => `<button type="button" data-act="lib-type" data-v="${type}" aria-pressed="${view.libType === type}">${type === 'all' ? esc(t('common.all')) : type.toUpperCase()}</button>`).join('')}
+        ${['all', 'pdf', 'docx', 'xlsx', 'csv', 'txt', 'img'].map(type => `<button type="button" data-act="lib-type" data-v="${type}" aria-pressed="${view.libType === type}">${type === 'all' ? esc(t('common.all')) : type.toUpperCase()}</button>`).join('')}
       </div>
       <label class="sr" for="library-status">${esc(t('lib.status'))}</label>
       <select id="library-status" class="select">

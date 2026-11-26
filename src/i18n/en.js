@@ -1,5 +1,8 @@
 /* English source strings. Every other locale must define exactly these keys. */
 export default {
+  'abst.ambiguous': 'Specify the product or model to identify its price.',
+  'abst.version-conflict': 'Document editions give different terms. Verify which edition applies.',
+  'common.actions': 'Actions',
   'app.name': 'Synoptik',
   'app.tagline': 'Every answer, on the record.',
   'app.description': 'Evidence-first answers from business documents.',
@@ -365,7 +368,7 @@ export default {
   'spots.rerun': 'Ask again',
   'spots.resolve': 'Mark resolved',
   'spots.reopen': 'Reopen',
-  'spots.hint': 'Resolve a blind spot after adding the missing evidence. Synoptik re-checks the answer; it does not take your word for it.',
+  'spots.hint': 'Mark a blind spot resolved after you verify the new evidence.',
   'spots.empty': 'No blind spots yet',
   'spots.empty.sub': 'Ask a question your documents cannot answer. It will appear here, with what was missing.',
   'spots.other': 'Other',

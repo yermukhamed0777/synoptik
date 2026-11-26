@@ -23,6 +23,7 @@ const STOP = new Set(
    lets a Russian question retrieve an English passage (and vice versa) without
    an embedding model. Kept explicit and small on purpose. */
 const CANON = {
+  paid: 'pay', pays: 'pay', хранятся: 'хран', хранение: 'хран', образцы: 'образ', образцов: 'образ',
   cost: 'price', costs: 'price', pricing: 'price', prices: 'price',
   guarantee: 'warranty', refund: 'return', refunds: 'return',
   shipping: 'delivery', ship: 'delivery', shipped: 'delivery', deliver: 'delivery', delivers: 'delivery',
@@ -251,21 +252,31 @@ function fuzzyKeys(index, key) {
 
 /* ---------- conflicting evidence ---------- */
 
-const MONEY_VALUE = /(\d[\d\s.,]*)\s*(?:₸|тг\b|тенге\b|kzt\b)/i;
+const currencySymbols = { '$':'USD', usd:'USD', '€':'EUR', eur:'EUR', '₽':'RUB', руб:'RUB', rub:'RUB', '₸':'KZT', тг:'KZT', тенге:'KZT', kzt:'KZT' };
+const currencyPattern = Object.keys(currencySymbols).map(key => key === '$' ? '\\$' : key).join('|');
+const numberPattern = '\\d+(?:[.,]\\d+|[ \\u00a0\\u202f]\\d{3}(?!\\d))*';
+const amountPattern = new RegExp('(?:(' + currencyPattern + ')\\s*(' + numberPattern + ')|(' + numberPattern + ')\\s*(' + currencyPattern + '))', 'gi');
 
-const parseAmount = text => {
-  const match = text.match(MONEY_VALUE);
-  if (!match) return null;
-  const value = Number(match[1].replace(/[^\d]/g, ''));
-  return Number.isFinite(value) && value > 0 ? value : null;
-};
+export function parseAmount(text, terms = []) {
+  const matches = [...text.matchAll(amountPattern)];
+  const positions = terms.map(term => text.toLowerCase().indexOf(term.raw.toLowerCase())).filter(pos => pos >= 0);
+  const distance = m => Math.min(...positions.map(pos => Math.abs(pos - m.index)));
+  if (positions.length) matches.sort((a,b) => distance(a) - distance(b));
+  if (!matches.length) return null;
+  const [,prefix,before,after,suffix] = matches[0];
+  let digits = (before || after).replace(/\s/g,'');
+  const decimal = digits.match(/[.,](\d{1,2})$/);
+  digits = decimal ? digits.slice(0,decimal.index).replace(/[.,]/g,'') + '.' + decimal[1] : digits.replace(/[.,]/g,'');
+  const value = Number(digits);
+  return Number.isFinite(value) ? {value, currency:currencySymbols[(prefix || suffix).toLowerCase()]} : null;
+}
 
 function documentAuthority(chunk) {
   const name = String(chunk.docName || '').toLowerCase();
   if (/price|прайс|баға/.test(name)) return 3;
   if (/catalog|каталог/.test(name)) return 2;
   if (/faq|policy|саясат|политик|warranty|delivery|return/.test(name)) return 1;
-  return 2;
+  return 0;
 }
 
 /** Document class inferred from its name; used to route an intent to the
@@ -322,13 +333,15 @@ function detectPriceConflict(index, productTerms) {
 
     let best = null;
     chunk.lines.forEach((_, index) => {
-      const value = parseAmount(lineAllText(chunk, index));
-      if (value == null) return;
+      const amount = parseAmount(lineAllText(chunk, index), productTerms);
+      if (!amount) return;
       const lineKeys = new Set(tokenize(lineAllText(chunk, index), true).map(token => token.s));
       const overlap = productTerms.filter(term => term.keys.some(key => lineKeys.has(key))).length;
       const distance = productLines.length ? Math.min(...productLines.map(productLine => Math.abs(productLine - index))) : 9;
       const score = overlap * 10 - distance;
-      if (!best || score > best.score) best = { line: index, value, score };
+      const nearby = productLines.filter(line => Math.abs(line - index) === distance && distance <= 1);
+      const keys = productTerms.filter(term => nearby.some(line => tokenize(lineAllText(chunk,line),true).some(token => token.s === term.s))).map(term => term.s);
+      if (keys.length && (!best || score > best.score)) best = { line:index, ...amount, keys, score };
     });
     if (!best) return;
 
@@ -337,7 +350,7 @@ function detectPriceConflict(index, productTerms) {
       groups.set(chunk.doc, {
         chunk,
         line: best.line,
-        value: best.value,
+        value: best.value, currency: best.currency, keys: best.keys,
         score: best.score,
         authority: documentAuthority(chunk),
       });
@@ -348,7 +361,7 @@ function detectPriceConflict(index, productTerms) {
   if (candidates.length < 2) return null;
   candidates.sort((a, b) => b.authority - a.authority || b.score - a.score);
   const used = candidates[0];
-  const other = candidates.find(group => group.value !== used.value);
+  const other = candidates.find(group => group.keys.some(key => used.keys.includes(key)) && (group.value !== used.value || group.currency !== used.currency));
   if (!other) return null;
 
   const describe = group => ({
@@ -356,7 +369,7 @@ function detectPriceConflict(index, productTerms) {
     chunk: group.chunk.id,
     docName: group.chunk.docName,
     line: group.line,
-    value: group.value,
+    value: group.value, currency: group.currency,
   });
 
   return { used: describe(used), other: describe(other) };
@@ -460,6 +473,10 @@ export function search(index, query, options = {}) {
   const productTerms = unique.filter(
     term => !SOFT.has(term.s) && !term.keys.includes('price') && !/^\d/.test(term.raw) && term.raw.length > 2
   );
+
+  if (priceQuestion && !productTerms.length && !unique.some(term => /\d/.test(term.raw))) {
+    return {status:'abstain',reason:'ambiguous',related,hits:[],coverage,missing,ms:elapsed,scanned:index.N};
+  }
 
   const hits = scored
     .filter(row => row.score >= top.score * 0.45)
@@ -585,8 +602,8 @@ export function search(index, query, options = {}) {
   const identifiers = unique.filter(term => /\d/.test(term.raw));
   if (identifiers.length) {
     const best = hits[0];
-    const chunkSet = new Set(tokenize(allText(best.chunk), true).map(token => token.s));
-    const bad = identifiers.filter(term => !term.keys.some(key => chunkSet.has(key)));
+    const chunkSet = new Set(tokenize(lineAllText(best.chunk,best.best.i), true).map(token => token.s));
+    const bad = identifiers.filter(term => !chunkSet.has(term.s));
     if (bad.length) {
       return {
         status: 'abstain',
@@ -665,6 +682,21 @@ export function search(index, query, options = {}) {
   }
   hits.length = Math.min(hits.length, Math.max(opts.maxSources, 2) + (conflict ? 1 : 0));
 
+  // Different dated editions with competing numeric terms need an explicit version.
+  if (['return','warranty','delivery'].includes(intent)) {
+    const winner = hits[0];
+    const family = name => (name || '').toLowerCase().replace(/\.[^.]+$/, '').replace(/(?:19|20)\d{2}/g,'').replace(/[^\p{L}\p{N}]+/gu,'');
+    const edition = name => (name || '').match(/(?:19|20)\d{2}/)?.[0];
+    const version = edition(winner.chunk.docName);
+    const claim = lineText(winner.chunk,winner.best.i,opts.lang);
+    const signature = text => tokenize(text.replace(/\d+(?:[.,]\d+)?/g,' ')).map(t=>t.s).join(' ');
+    if (version && /\d/.test(claim) && index.docs.some(({chunk}) =>
+      chunk.doc !== winner.chunk.doc && family(chunk.docName) === family(winner.chunk.docName) &&
+      edition(chunk.docName) && edition(chunk.docName) !== version &&
+      chunk.lines.some((_,i) => { const other=lineText(chunk,i,opts.lang); return signature(other) === signature(claim) && other.match(/\d+/g)?.join() !== claim.match(/\d+/g)?.join(); }))) {
+      return {status:'abstain',reason:'version-conflict',related,hits:[],coverage,missing,ms:elapsed,scanned:index.N};
+    }
+  }
   const strength = partial ? 'limited' : coverage >= 0.85 && hits.length >= 2 ? 'strong' : coverage >= 0.7 ? 'moderate' : 'limited';
   return {
     status: 'answer',

@@ -26,7 +26,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 /* ---------- arguments ---------- */
 
 const argv = process.argv.slice(2);
-const args = { sets: [], thresholds: { answered: 0.75, wrong: 0.05, refusal: 0.85 } };
+import {demoFloor, realFloor} from "../eval/floors.mjs";
+const args = { sets: [], thresholds: {...(process.argv.includes("--corpus") ? realFloor : demoFloor)} };
 for (let i = 0; i < argv.length; i++) {
   const token = argv[i];
   const next = () => argv[++i];

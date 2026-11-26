@@ -47,3 +47,26 @@ Append one entry per work session. Format:
 - Added a condensed session-history table to `plan/strategy.md` §15; linked the roadmap from README and the plan index; updated the plan convention to require roadmap and session-history updates.
 - Verified after the edits: no code changed, so the earlier verification still holds — 33/33 tests, 95.4% / 1.2% / 100%, 2.11 MB build. Both CI runs on `main` completed successfully.
 - Open: S1 (P0-1) is the next action; no deployment to Vercel or Supabase scaffold has been executed yet — those are S8 and S9.
+
+### 2026-11-26 — Phase 1 P0 remediation and release verification
+
+- Applied and verified the pre-existing remediation changes in the working tree (uncommitted since `13005d8`):
+  - P0-1 `src/app/ask.js` `composeDirect`: distinct, non-empty detail bullets; `plainAnswer()` copy cleaned.
+  - P0-2 `src/app/ask.js` `remoteAsk`: `validEndpoint` (https only, localhost http allowed, no creds), 10 s AbortController, 64 KiB stream size cap, full response schema validation, citation `doc`/`location` preserved via `loc.remote`, malformed/hanging responses degrade to refusal.
+  - P0-3 `src/app/ask.js` `resolveQuestionAsync`: semantic path returns `related` documents only, never claims an answer or bypasses coverage/identifier/comparison/conflict guards.
+  - P0-4 `src/domain/engine.js`: `parseAmount` handles all currencies (`$ € ₽ ₸`) with decimal preservation and product-proximity scoring; `documentAuthority` unknown → 0; conflict requires shared product keys and value/currency divergence.
+  - P0-5 `build.mjs`/`src/ai/local.js`/`src/app/parsers.js`: pdf.js and tesseract.js (+worker) vendored locally, `isEvalSupported: false` on both PDF paths, CSP allows wasm-eval + loopback connect, rejected tesseract promise resets on failure.
+  - P0-6 `eval/floors.mjs` shared demo (90/5/95) and real (85/2/90) floors; `npm run eval` no longer writes the tracked scorecard; CI writes scorecards to temp.
+  - P0-7 `src/styles/base.css`: `--muted #59616F`, `--accent-ink`, accent button uses `var(--accent-ink)`; WCAG AA body text ≥4.5:1, accent button ≥4.5:1 hover included.
+  - P0-8 `src/ui/main.js`/`overlays.js`/`shell.js`: focus trap + `inert` + `lastFocus`, scrim, `aria-expanded`/`aria-controls` on menu button, Escape closes nav/tour, tour re-entry guard + ends at 0:00.
+  - P0-9 `src/ui/*` + `src/i18n/*.js`: remaining visible strings moved into dictionaries (`ans.evidence`, `common.actions`, abstention reasons), `LANGS` imported, platform-aware `⌘K`/`Ctrl K`, receipt excerpt from translation.
+  - P0-10 `src/ui/main.js`/`pages/coverage.js`/`pages/ask.js`/`i18n`: "Mark resolved" copy corrected, coverage counts via `docList()`, staged 4×170 ms loading delay removed.
+  - P1-2 `src/app/parsers.js`: single `MAX_BYTES`, decompression ratio/archive limits, ZIP64 method guard, merge budget, `file-limit` pre-check, `loadPdfLibrary` exported.
+- Added Phase 2 independent evaluation: `eval/independent/` (9-file corpus across XLSX/DOCX/CSV/TXT/MD/PDF incl. conflicting versions, scanned PDF, malformed ZIP, embedded markup), `eval/independent/truth.json` (12 questions: 6 answerable, 7 refusals, multilingual, comparisons, unsupported, embedded instructions), `scripts/independent.mjs`, `eval/floors.mjs`.
+- Verification results:
+  - `npm test`: **33/33 pass**, exit 0.
+  - `node build.mjs`: **2.31 MB `dist/`, zero dependencies**, exit 0.
+  - `node scripts/independent.mjs`: **exit 0** — parsing 9/9, recall@3 6/6, supported answers 6/6, correct refusals 7/7, citations 6/6, p95 ~3.7 ms, RSS peak 53 MiB, zero failures (real floor 85/2/90 met).
+  - `node scripts/browser-release.mjs` (Edge headless): **exit 0** — live answer with distinct bullets, refusal, PDF text layer + scanned-PDF error, citation `Audit.pdf p. 4`, EN/RU/KK `<html lang>`, focus restore, mobile 390px, network contract (no external requests; backend receives only `language`/`question`/`threshold`), zero console exceptions and zero CSP violations.
+- Open: M1 real corpora, M2/M3 server/workflow, GitHub CI has not yet run on this commit, public deployment not yet established.
+

@@ -45,7 +45,7 @@ function sourceDrawer() {
         <span class="evidence-num">${view.drawer.index + 1}</span>
         <div class="grow">
           <div class="eyebrow">${esc(t('src.title'))}</div>
-          <b>${esc(doc ? doc.name : '')}</b>
+          <b>${esc(doc?.name || chunk.docName || '')}</b>
         </div>
         <button type="button" class="btn ghost icon" data-act="close" aria-label="${esc(t('common.close'))}">${icon('x', 'sm')}</button>
       </header>
@@ -73,7 +73,7 @@ function sourceDrawer() {
               const entryDoc = docById(entry.chunk.doc);
               return `<button type="button" class="evidence-mini ${index === view.drawer.index ? 'active' : ''}" data-act="source" data-turn="${turn.id}" data-i="${index}">
                 <span class="evidence-num">${index + 1}</span>
-                <span class="grow"><b>${esc(entryDoc ? entryDoc.name : '')}</b><span class="badge">${esc(locLabel(entry.chunk.loc))}</span></span>
+                <span class="grow"><b>${esc(entryDoc?.name || entry.chunk.docName || '')}</b><span class="badge">${esc(locLabel(entry.chunk.loc))}</span></span>
               </button>`;
             }).join('')}
           </div>
@@ -194,14 +194,14 @@ function quickModal() {
     <div class="modal quick" role="dialog" aria-modal="true" aria-label="${esc(t('qs.btn'))}">
       <div class="quick-input">
         ${icon('search', 'sm')}
-        <input id="quick-input" type="text" placeholder="${esc(t('qs.ph'))}" value="${esc(view.quick.q)}" autocomplete="off" aria-label="${esc(t('qs.btn'))}" role="combobox" aria-expanded="true">
+        <input id="quick-input" type="text" placeholder="${esc(t('qs.ph'))}" value="${esc(view.quick.q)}" autocomplete="off" aria-label="${esc(t('qs.btn'))}" role="combobox" aria-expanded="true" aria-controls="quick-results" ${items.length ? 'aria-activedescendant="quick-option-' + view.quick.sel + '"' : ''}>
         <kbd>Esc</kbd>
       </div>
-      <div class="quick-results">
+      <div class="quick-results" id="quick-results" role="listbox">
         ${items.map((item, index) => {
           const header = item.group !== lastGroup ? `<div class="quick-group">${esc(item.group)}</div>` : '';
           lastGroup = item.group;
-          return `${header}<button type="button" class="quick-item" data-act="quick-run" data-i="${index}" role="option" aria-selected="${index === view.quick.sel}">
+          return `${header}<button type="button" id="quick-option-${index}" class="quick-item" data-act="quick-run" data-i="${index}" role="option" aria-selected="${index === view.quick.sel}">
             ${icon(item.icon, 'sm')}<span class="grow">${esc(item.label)}</span>${item.sub ? `<span class="muted small">${esc(item.sub)}</span>` : ''}
           </button>`;
         }).join('') || `<div class="quick-empty">${esc(t('qs.none'))}</div>`}

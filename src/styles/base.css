@@ -6,9 +6,10 @@
   --surface-2: #F2EDDF;
   --ink: #121A26;
   --ink-2: #3A4656;
-  --muted: #6E7685;
+  --muted: #59616F;
   --line: #D9D2C1;
   --line-strong: #BEB49E;
+  --accent-ink: #fff;
   --accent: #B4451F;
   --accent-2: #8F3514;
   --accent-soft: #F3E1D5;
@@ -41,6 +42,7 @@
   --muted: #8C948F;
   --line: #24313A;
   --line-strong: #3A4853;
+  --accent-ink: #17100C;
   --accent: #E47B4F;
   --accent-2: #F08D63;
   --accent-soft: #2A1A13;
@@ -121,7 +123,7 @@ svg.i.lg { width: 22px; height: 22px; }
 .btn.lg { height: 46px; padding: 0 22px; font-size: 14px; }
 .btn.icon { width: 34px; padding: 0; }
 .btn.sm.icon { width: 28px; }
-.btn.accent { background: var(--accent); border-color: var(--accent); color: #FFF8F2; }
+.btn.accent { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn.accent:hover { background: var(--accent-2); border-color: var(--accent-2); }
 .btn.ghost { background: transparent; border-color: transparent; color: var(--ink-2); }
 .btn.ghost:hover { background: var(--surface-2); border-color: transparent; color: var(--ink); }

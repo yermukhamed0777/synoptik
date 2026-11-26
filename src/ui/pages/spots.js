@@ -53,7 +53,7 @@ export function spotsPage() {
           <th class="hide-sm">${esc(t('spots.docs'))}</th>
           <th class="hide-md">${esc(t('spots.date'))}</th>
           <th>${esc(t('spots.status'))}</th>
-          <th class="col-actions"><span class="sr">Actions</span></th>
+          <th class="col-actions"><span class="sr">${esc(t('common.actions'))}</span></th>
         </tr></thead>
         <tbody>${gaps.map(gap => {
           const reason = gapReason(gap);

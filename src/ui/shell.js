@@ -7,7 +7,7 @@ import { view } from './view-state.js';
 export function shell(content) {
   const openSpots = state.gaps.filter(gap => gap.status === 'open').length;
   return `<div class="shell">
-    <aside class="rail ${view.navOpen ? 'open' : ''}" aria-label="${esc(t('nav.main'))}">
+    <aside id="workspace-nav" class="rail ${view.navOpen ? 'open' : ''}" aria-label="${esc(t('nav.main'))}">
       ${logo('./index.html')}
       <nav class="rail-nav">
         ${NAV.map(([route, iconName, label]) => `<a class="rail-link" href="#${route}" ${view.route === route ? 'aria-current="page"' : ''}>
@@ -23,12 +23,13 @@ export function shell(content) {
       </div>
     </aside>
 
+    ${view.navOpen ? '<div class="nav-scrim" data-act="menu"></div>' : ''}
     <div class="main">
       <header class="topbar">
-        <button type="button" class="btn ghost icon menu-btn" data-act="menu" aria-label="${esc(t('nav.menu'))}">${icon('menu', 'sm')}</button>
+        <button type="button" class="btn ghost icon menu-btn" data-act="menu" aria-controls="workspace-nav" aria-expanded="${view.navOpen}" aria-label="${esc(t('nav.menu'))}">${icon('menu', 'sm')}</button>
         <span class="topbar-title">${esc(t(routeTitle(view.route)))}</span>
         <span class="grow"></span>
-        <button type="button" class="search-btn" data-act="quick">${icon('search', 'xs')}<span>${esc(t('common.search'))}</span><kbd>Ctrl K</kbd></button>
+        <button type="button" class="search-btn" data-act="quick">${icon('search', 'xs')}<span>${esc(t('common.search'))}</span><kbd>${/Mac|iPhone|iPad/.test(navigator.platform) ? '⌘K' : 'Ctrl K'}</kbd></button>
         ${modeChip()}
       </header>
       ${content}

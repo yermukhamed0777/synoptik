@@ -423,3 +423,6 @@ body.workspace { background: var(--paper); }
   .toolbar-count { display: none; }
   .col-actions { width: 84px; }
 }
+
+.nav-scrim { display:none }
+@media(max-width:900px){.rail:not(.open){visibility:hidden}.nav-scrim{display:block;position:fixed;inset:0;background:#0007;z-index:44}}

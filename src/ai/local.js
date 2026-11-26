@@ -9,11 +9,9 @@
 import { lineText } from '../domain/engine.js';
 
 const CDN = {
-  transformers: 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3',
+  transformers: 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1',
   model: 'Xenova/multilingual-e5-small',
-  pdfjs: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs',
-  pdfWorker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs',
-  tesseract: 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js',
+  tesseract: new URL('../../vendor/tesseract.min.js', import.meta.url).href,
 };
 
 const runtime = {
@@ -158,8 +156,11 @@ function loadScript(src) {
 }
 
 async function ocrWorker() {
-  if (!window.Tesseract) await (tesseractPromise ||= loadScript(CDN.tesseract));
-  return window.Tesseract.createWorker(['rus', 'kaz', 'eng']);
+  if (!window.Tesseract) await (tesseractPromise ||= loadScript(CDN.tesseract).catch(error => { tesseractPromise = null; throw error; }));
+  return window.Tesseract.createWorker(['rus', 'kaz', 'eng'], 1, {
+    workerPath: new URL('../../vendor/worker.min.js', import.meta.url).href, workerBlobURL: false,
+    corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',
+  });
 }
 
 async function ocrPDF(buffer, onProgress, maxPages = 12) {
@@ -167,7 +168,7 @@ async function ocrPDF(buffer, onProgress, maxPages = 12) {
   notify();
   try {
     const pdfjs = await loadPdfJs();
-    const doc = await pdfjs.getDocument({ data: new Uint8Array(buffer) }).promise;
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(buffer), isEvalSupported: false }).promise;
     const pages = Math.min(doc.numPages, maxPages);
     const worker = await ocrWorker();
     const texts = [];
@@ -211,9 +212,8 @@ async function ocrImage(file) {
 }
 
 export async function loadPdfJs() {
-  const pdfjs = await import(/* webpackIgnore: true */ CDN.pdfjs);
-  pdfjs.GlobalWorkerOptions.workerSrc = CDN.pdfWorker;
-  return pdfjs;
+  const { loadPdfLibrary } = await import('../app/parsers.js');
+  return loadPdfLibrary();
 }
 
 export const AI = {

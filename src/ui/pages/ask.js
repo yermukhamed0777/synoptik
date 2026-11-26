@@ -98,7 +98,7 @@ function evidenceCard(turn, evidence, index) {
     <button type="button" class="evidence" data-act="source" data-turn="${turn.id}" data-i="${index}">
       <span class="evidence-num">${index + 1}</span>
       <span class="evidence-body">
-        <span class="evidence-doc">${ficon(doc ? doc.type : 'txt')}<b>${esc(doc ? doc.name : '?')}</b><span class="badge">${esc(locLabel(chunk.loc))}</span></span>
+        <span class="evidence-doc">${ficon(doc ? doc.type : 'txt')}<b>${esc(doc?.name || chunk.docName || '?')}</b><span class="badge">${esc(locLabel(chunk.loc))}</span></span>
         <span class="evidence-text">${highlighted}</span>
       </span>
       <span class="evidence-open">${icon('eye', 'sm')}</span>
@@ -115,7 +115,7 @@ function conflictBlock(result, turn) {
     const usedName = docById(conflict.used.doc)?.name || conflict.used.docName;
     const otherName = docById(conflict.other.doc)?.name || conflict.other.docName;
     const value = (index, entry, name) => {
-      const body = `<b>${fmtNum(entry.value)} ₸</b> — ${esc(name)}`;
+      const body = `<b>${fmtNum(entry.value)} ${esc(entry.currency)}</b> — ${esc(name)}`;
       return index >= 0
         ? `<button type="button" class="link-button" data-act="source" data-turn="${turn.id}" data-i="${index}">${body}</button>`
         : `<p>${body}</p>`;
@@ -186,7 +186,7 @@ function verifiedAnswer(turn) {
       return true;
     })
     .map(({ item, index }) => {
-      const doc = docById(item.chunk.doc);
+      const doc = docById(item.chunk.doc) || (item.chunk.loc.remote && {name:item.chunk.docName,type:'txt'});
       if (!doc) return '';
       return `<button type="button" class="chip source-chip" data-act="source" data-turn="${turn.id}" data-i="${index}">
         ${ficon(doc.type)}<b>${esc(doc.name)}</b><span class="muted">${esc(locLabel(item.chunk.loc))}</span>
@@ -238,6 +238,7 @@ function refusedAnswer(turn) {
   const related = comparison ? [] : (result.related || []).map(docById).filter(Boolean);
   const why = result.qa
     ? pick(result.qa.why)
+    : ['ambiguous','version-conflict'].includes(result.reason) ? t('abst.'+result.reason)
     : result.reason === 'comparison'
       ? t('abst.comparison')
       : result.missing && result.missing.length

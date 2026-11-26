@@ -1,5 +1,5 @@
 import { qaById, questionText } from '../../app/ask.js';
-import { allChunks, DAY, indexSize, state, t } from '../../app/state.js';
+import { docList, allChunks, DAY, indexSize, state, t } from '../../app/state.js';
 import { CORPUS } from '../../domain/corpus.js';
 import { esc, fmtNum, fmtTime } from '../format.js';
 import { emptyState, pageHead, topicName } from '../components.js';
@@ -50,8 +50,9 @@ function chart() {
 }
 
 export function coveragePage() {
-  const docs = state.uploads.length + (state.settings.useDemo ? CORPUS.DOCS.length : 0);
-  const ready = state.uploads.filter(upload => upload.status === 'processed').length + (state.settings.useDemo ? CORPUS.DOCS.length : 0);
+  const documents = docList();
+  const docs = documents.length;
+  const ready = documents.filter(doc => doc.status === 'processed').length;
   const total = state.history.length;
   const answered = state.history.filter(entry => entry.status === 'answer').length;
   const refused = total - answered;

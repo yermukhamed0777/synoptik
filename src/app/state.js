@@ -136,17 +136,17 @@ export function allChunks() {
   const chunks = [];
   if (state.settings.useDemo) {
     CORPUS.CHUNKS.forEach(chunk => {
-      if (!state.removed.includes(chunk.doc)) chunks.push(chunk);
+      if (!state.removed.includes(chunk.doc)) chunks.push({ ...chunk });
     });
   }
   state.uploads.forEach(upload => {
-    if (upload.status === 'processed') (upload.chunks || []).forEach(chunk => chunks.push(chunk));
+    if (upload.status === 'processed') (upload.chunks || []).forEach(chunk => chunks.push({ ...chunk }));
   });
 
   chunks.forEach(chunk => {
     if (chunk.docName === undefined) {
       const doc = docById(chunk.doc);
-      chunk.docName = doc ? doc.name.replace(/[_.]/g, ' ') + ' ' + (chunk.loc?.sheet || '') : '';
+      chunk.docName = doc ? doc.name : '';
     }
   });
   return chunks;
@@ -172,6 +172,7 @@ export const indexSize = () => (index ? index.N : 0);
 
 export function locLabel(loc) {
   if (!loc) return '';
+  if (loc.remote) return loc.remote;
   if (loc.page) return t('loc.page', loc.page);
   if (loc.sheet) return t('loc.sheet', loc.sheet, loc.rows);
   if (loc.section) return t('loc.section', loc.section);
@@ -183,7 +184,7 @@ export function locLabel(loc) {
 
 export function citeStr(chunk) {
   const doc = docById(chunk.doc);
-  return `${doc ? doc.name : '?'} — ${locLabel(chunk.loc)}`;
+  return `${chunk.docName && chunk.loc?.remote ? chunk.docName : doc?.name || '?'} — ${locLabel(chunk.loc)}`;
 }
 
 /* ---------- ask bookkeeping ---------- */
